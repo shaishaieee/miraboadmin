@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   //const for API Backend
 
-  const [totalUser, setTotalUser] = useState([]);
+  const [totalUser, setTotalUser] = useState(null);
   const [totalAds, setTotalAds] = useState([]);
   const [totalGpt, setTotalGpt] = useState([]);
 
@@ -28,7 +28,7 @@ const Dashboard = () => {
   const fetchTotalUser = async () => {
     try {
       const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/user-count')
-      setTotalUser(response.data); // Assume API returns { users: 150, ads: 109, chatResponses: 290 }
+      setTotalUser(response.data.user_counts);
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -38,7 +38,8 @@ const Dashboard = () => {
   const fetchTotalAds = async () => {
     try {
       const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/ads-count')
-      setTotalAds(response.data); // Assume API returns { users: 150, ads: 109, chatResponses: 290 }
+      setTotalAds(response.data.ads_counts);
+      console.log(response.data.ads_counts); // Assume API returns { users: 150, ads: 109, chatResponses: 290 }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     }
@@ -47,7 +48,8 @@ const Dashboard = () => {
   const fetchTotalGpt = async () => {
     try {
       const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/prompt-count')
-      setTotalGpt(response.data); // Assume API returns { users: 150, ads: 109, chatResponses: 290 }
+      setTotalGpt(response.data.result_counts);
+      console.log(response.data); // Assume API returns { users: 150, ads: 109, chatResponses: 290 }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     }
@@ -130,7 +132,7 @@ const Dashboard = () => {
               <div className="flex justify-between h-[90px] w-[380px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
                 <div className="box-text">
                   <h1 className="mb-[5px] text-white font-bold">
-                       {totalUser}
+                      {totalUser}
                   </h1>
                   <h4 className="font-semibold text-white">ミニアプリユーザー総数</h4>
                 </div>

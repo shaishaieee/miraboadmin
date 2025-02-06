@@ -1,4 +1,5 @@
 
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch, FaUserEdit } from "react-icons/fa";
 import { HiUserAdd } from "react-icons/hi";
@@ -12,11 +13,10 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
   const [email, setEmail] = useState(user?.email || "");
   const [role, setRole] = useState(user?.role || "");
   const [password, setPassword] = useState(user?.password || "");
-
   useEffect(() => {
     if (user){
-      setFirstName(user.firstName);
-      setLastName(user.lastName);
+      setFirstName(user.first_name);
+      setLastName(user.last_name);
       setEmail(user.email);
       setRole(user.role);
       setPassword(user.password);
@@ -127,12 +127,13 @@ const UserManagement = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState([
-    {firstName: "Shai Mae", lastName: "Lopez", email: "shaira@test.com", role: "Admin", dateCreated: "2025-01-01", password: "1234"},
-    {firstName: "Shai Mae", lastName: "Zai", email: "shai@test.com", role: "Admin", dateCreated: "2025-02-01", password: "12345"},
-    {firstName: "Shai Mae", lastName: "Sia", email: "shair@test.com", role: "Admin", dateCreated: "2025-01-25", password: "123456"},
-    {firstName: "Shai Mae", lastName: "Que", email: "sha@test.com", role: "Admin", dateCreated: "2025-02-27", password: "1234567"}
-  ]);
+  // const [users, setUsers] = useState([
+  //   {firstName: "Shai Mae", lastName: "Lopez", email: "shaira@test.com", role: "Admin", dateCreated: "2025-01-01", password: "1234"},
+  //   {firstName: "Shai Mae", lastName: "Zai", email: "shai@test.com", role: "Admin", dateCreated: "2025-02-01", password: "12345"},
+  //   {firstName: "Shai Mae", lastName: "Sia", email: "shair@test.com", role: "Admin", dateCreated: "2025-01-25", password: "123456"},
+  //   {firstName: "Shai Mae", lastName: "Que", email: "sha@test.com", role: "Admin", dateCreated: "2025-02-27", password: "1234567"}
+  // ]);
+  const [users, setUsers] = useState([])
   const [lastNameSortConfig, setLastNameSortConfig] = useState({
     direction: "ascending"
   });
@@ -149,6 +150,24 @@ const UserManagement = () => {
     setUser(user);
     setIsModalOpen(true);
   }
+
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users')
+      .then((response) => {
+        console.log(response.data)
+        setUsers(response.data)
+      })
+
+      console.log("Fetched Users:", response.data);
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchUser()
+  }, [])
 
   const handleSave = (newUser) => {
     if (user){
@@ -232,9 +251,9 @@ const UserManagement = () => {
                   <tbody>
                     {users.map((user) => (
                       <tr key={user.email}>
-                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.lastName}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.firstName}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.dateCreated}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.last_name}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.first_name}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.created_at}</td>
                       <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.email}</td>
                       <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">{user.role}</td>
                       <td className="border border-[var(--fontcolor-header)] p-[10px] h-[20px]">
