@@ -11,8 +11,6 @@ const Login = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
 
-  // const hardCodedDetails = {email: "shaira@test.com", password: "123"};
-
   const handleSubmition = async (e) => {
     e.preventDefault();
 
@@ -32,12 +30,6 @@ const Login = () => {
       console.error("Login error:", error);
       alert("An error occurred. Please try again.");
     }
-
-    // if (userEmail === hardCodedDetails.email && userPassword === hardCodedDetails.password){
-    //   navigate("/dashboard");
-    // } else {
-    //   alert("Invalid email or password.");
-    // }
   }
 
 
@@ -89,8 +81,8 @@ const Login = () => {
   
           <div className="w-[370px] h-[400px] bg-[var(--bgc-sidenav)] p-5">
             <p className="text-center text-white">
-              Lorem、ipsum dolor
-              は、エリートを構築するために座っています。イブニエット、 陣痛。
+            ようこそ、Mirabo管理ダッシュボードへ！
+            MiraboのLINEチャットボットに関するすべての記録が安全に保存されています。
             </p>
             <img className="w-[380px]" src={LoginPhoto} alt="Login" />
           </div>

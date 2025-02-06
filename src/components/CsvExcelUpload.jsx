@@ -47,10 +47,10 @@ const CsvExcelUpload = () => {
     return (
       <>
         <div>
-          <h1 className="ml-[20px] font-semibold mb-5">CVS/Excel ファイル</h1>
+          <h1 className="ml-[20px] font-semibold mb-5">CSV/Excelアップロード</h1>
   
           <div className="ml-[20px]">
-            <h3 className="font-semibold">CSVまたはExcelシートをアップロードする</h3>
+            <h3 className="font-semibold">質問が記載されたCSV（or）Excelファイルをアップロード</h3>
   
             <div className="h-[30px] py-[5px] px-[20px]">
               <form className="flex items-center gap-[30px]" action="" onSubmit={handleFileSubmit}>
@@ -101,7 +101,7 @@ const CsvExcelUpload = () => {
                 </div>
               ) : (
                 <div className="my-[65px] mx-[20px]">
-                  ファイルがアップロードされていません
+                  ファイルをアップロードしてください。
                 </div>
               )}
             </div>

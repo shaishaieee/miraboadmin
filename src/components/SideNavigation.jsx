@@ -14,10 +14,10 @@ const SideNavigation = ({ children }) => {
     const toggleSideNav = () => setIsSideNavMinimized(!isSideNavMinimized);
   
     const menuItem = [
-      { path: "/dashboard", name: "Dashboard", icon: <AiFillDashboard /> },
-      { path: "/usermanagement", name: "User Management", icon: <FaUsers /> },
-      { path: "/userprofile", name: "User Profile", icon: <FaUser /> },
-      { path: "/csvexcelupload", name: "CSV/Excel Upload", icon: <FaUpload /> },
+      { path: "/dashboard", name: "ダッシュボード", icon: <AiFillDashboard /> },
+      { path: "/usermanagement", name: "ユーザー管理", icon: <FaUsers /> },
+      { path: "/userprofile", name: "ユーザープロフィール", icon: <FaUser /> },
+      { path: "/csvexcelupload", name: "CSV/Excelアップロード", icon: <FaUpload /> },
     ];
   
     const handleLogout = () => {
@@ -55,7 +55,7 @@ const SideNavigation = ({ children }) => {
               <div className="group flex gap-[20px] items-center my-0 mx-[10px] text-[var(--fontcolor-side)] py-1 cursor-pointer hover:bg-[var(--fontcolor-side)] hover:rounded-[5px] hover:text-[var(--bgc-sidenav)] hover:side-nav-button" onClick={handleLogout}>
                 <i className="text-[30px] ml-2"><IoLogOut /></i>
                 <button className={`border-0 font-semibold bg-transparent text-[16px] text-[var(--fontcolor-side)] side-nav-button hover:rounded-[5px] group-hover:text-[var(--bgc-sidenav)] hover:bg-[var(--fontcolor-side)] ${isSideNavMinimized ? "hidden" : ""}`}>
-                  Log out
+                ログアウト
                 </button>
               </div>
             </div>

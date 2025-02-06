@@ -10,17 +10,17 @@ const UserProfile = () => {
 
             <div className="shadow-2xl my-[15px] mx-[5px] p-[20px] rounded-[5px]">
               <h3 className="font-bold">
-                ファーストネーム: <span className="font-semibold">Lorry Mae</span>
+              名: <span className="font-semibold">Lorry Mae</span>
               </h3>
               <h3 className="font-bold">
-                苗字: <span className="font-semibold">Mcintire</span>
+              姓: <span className="font-semibold">Mcintire</span>
               </h3>
   
               <h3 className="font-bold">
-                メール: <span className="font-semibold">Mcintiire@test.com</span>
+              メールアドレス: <span className="font-semibold">Mcintiire@test.com</span>
               </h3>
               <h3 className="font-bold">
-                役割: <span className="font-semibold">User</span>
+              権限: <span className="font-semibold">管理者</span>
               </h3>
             </div>
 

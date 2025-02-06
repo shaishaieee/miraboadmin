@@ -40,12 +40,12 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
       <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm shadow-2xl">
         <div className="bg-[var(--bgc-sidenav)] p-6 rounded-sm w-96">
           <h2 className="text-xl font-bold mb-4 text-white">
-            {user ? "Edit Info" : "Add User"}
+            {user ? "情報の編集" : "ユーザーの追加"}
           </h2>
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-white" htmlFor="firstName">
-              First Name
+            名
             </label>
             <input
               type="text"
@@ -57,7 +57,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-white" htmlFor="lastName">
-              Last Name
+            姓
             </label>
             <input
               type="text"
@@ -69,7 +69,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-white" htmlFor="email">
-              Email
+            メールアドレス
             </label>
             <input
               type="email"
@@ -81,7 +81,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-white" htmlFor="role">
-              Role
+            権限
             </label>
             <input
               type="text"
@@ -92,7 +92,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-white" htmlFor="role">
-              Password
+            パスワード
             </label>
             <input
               type="text"
@@ -107,13 +107,13 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
               onClick={onClose}
               className="bg-gray-300 text-gray p-2 rounded-sm hover:bg-gray-400 text-[12px] font-semibold w-20"
             >
-              Cancel
+              キャンセル
             </button>
             <button
               onClick={handleSubmit}
               className="text-[var(--bgc-sidenav)] bg-white p-2 rounded-sm text-[12px] font-semibold w-20 hover:bg-gray-300"
             >
-              {user ? "Edit" : "Add"} User
+              {user ? "編集" : "追加"} ユーザー
             </button>
           </div>
         </div>
@@ -127,12 +127,6 @@ const UserManagement = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
-  // const [users, setUsers] = useState([
-  //   {firstName: "Shai Mae", lastName: "Lopez", email: "shaira@test.com", role: "Admin", dateCreated: "2025-01-01", password: "1234"},
-  //   {firstName: "Shai Mae", lastName: "Zai", email: "shai@test.com", role: "Admin", dateCreated: "2025-02-01", password: "12345"},
-  //   {firstName: "Shai Mae", lastName: "Sia", email: "shair@test.com", role: "Admin", dateCreated: "2025-01-25", password: "123456"},
-  //   {firstName: "Shai Mae", lastName: "Que", email: "sha@test.com", role: "Admin", dateCreated: "2025-02-27", password: "1234567"}
-  // ]);
   const [users, setUsers] = useState([])
   const [lastNameSortConfig, setLastNameSortConfig] = useState({
     direction: "ascending"
@@ -153,12 +147,10 @@ const UserManagement = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users')
-      .then((response) => {
+      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users');
         console.log(response.data)
         setUsers(response.data)
-      })
-
+      
       console.log("Fetched Users:", response.data);
     }catch(error){
       console.log(error)
@@ -169,18 +161,28 @@ const UserManagement = () => {
     fetchUser()
   }, [])
 
-  const handleSave = (newUser) => {
+  const handleSave = async (newUser) => {
+    try{
     if (user){
-      const updateUsers = users.map((u) => u.email === user.email ? newUser : u);
-      setUsers(updateUsers);
+      await axios.put(`https://reuvindevs.com/liff/public/api/users/${user.email}`, newUser);
+      setUsers(users.map((u) => (u.email === user.email ? newUser : u)));
     } else {
-      setUsers((prevUsers) => [...prevUsers, newUser]);
+      const response = await axios.post(`https://reuvindevs.com/liff/public/api/users`, newUser);
+      setUsers([...users, response.data]);
     }
     setIsModalOpen(false);
+  } catch (error){
+    console.error("Error saving user:", error);
+  }
   };
 
-  const handleDelete = email => {
-    setUsers((prevUsers) => prevUsers.filter((user)=> user.email !== email));
+  const handleDelete = async (email) => {
+    try{
+      await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.email}`);
+      setUsers(users.filter((user)=> user.email !== email));
+    } catch (error){
+      console.error("Error deleting user:", error);
+    }
   };
 
   const handleSortLastName = () => {
@@ -226,14 +228,14 @@ const UserManagement = () => {
                     <tr>
                       <th className=" 
                       border border-[var(--fontcolor-header)] p-[10px] text-black text-start max-w-[200px]">
-                      Last Name
+                      姓
                         <i className="ml-[10px]" onClick={handleSortLastName}>
                           <LuArrowDownUp />
                         </i>
                       </th>
                       <th className=" 
                       border border-[var(--fontcolor-header)] p-[10px] text-black text-start min-w-[200px]">
-                      First Name
+                      名
                       </th>
                       <th className="
                       border border-[var(--fontcolor-header)] p-[10px] text-black text-start min-w-[210px]">
@@ -242,8 +244,8 @@ const UserManagement = () => {
                           <LuArrowDownUp />
                         </i>
                       </th>
-                      <th className="border border-[var(--fontcolor-header)] p-[10px] text-black text-start max-w-[150px]">Email</th>
-                      <th className="border border-[var(--fontcolor-header)] p-[10px] text-black text-start w-[150px]">役割</th>
+                      <th className="border border-[var(--fontcolor-header)] p-[10px] text-black text-start max-w-[150px]">メールアドレス</th>
+                      <th className="border border-[var(--fontcolor-header)] p-[10px] text-black text-start w-[150px]">権限</th>
                       <th className="border border-[var(--fontcolor-header)] p-[10px] text-black text-start w-[100px]">アクション</th>
                     </tr>
                   </thead>

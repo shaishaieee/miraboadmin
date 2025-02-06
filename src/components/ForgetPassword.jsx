@@ -17,18 +17,17 @@ const ForgetPassword = () => {
               <div className="flex justify-center items-center w-[400px] h-[200px] bg-[var(--bgc-sidenav)] px-[30px} py-[20px]">
                 <img className="w-[200px]" src={Forget} alt="Forget Password" />
                 <p className="text-white items-center mr-[20px]">
-                  Lorem、ipsum dolor
-                  は、エリートを構築するために座っています。イブニエット、 陣痛。
+                パスワードをお忘れの場合はこちらから。
                 </p>
               </div>
   
               <div className="w-[400px] h-[250px] px-[30px] py-[20px]">
                 <p className="text-[16px] text-center text-[var(--bgc-sidenav)]">
-                  パスワードを忘れましたか？ここで簡単に新しいパスワードを取得できます
+                パスワードをお忘れの場合はこちらから新しいパスワードを発行してください。
                 </p>
                 <form action="" >
                   <div className="relative flex justify-center w-full my-[20px] mx-0">
-                    <input className="w-full p-[10px] text-[16px] border-[1px] border-[var(--bgc-sidenav)] rounded-[5px]" type="email" placeholder="メール" />
+                    <input className="w-full p-[10px] text-[16px] border-[1px] border-[var(--bgc-sidenav)] rounded-[5px]" type="email" placeholder="メールアドレス" />
                     <i className="absolute text-[20px] right-[20px] top-[11px]">
                       <FaEnvelope />
                     </i>
@@ -36,12 +35,12 @@ const ForgetPassword = () => {
   
                   <div className="flex justify-center w-full h-[40px]">
                     <button className="w-full text-[16px] bg-[var(--bgc-sidenav)] border-2 border-transparent transition-all duration-1000 ease-in-out rounded-[5px] text-white hover:bg-white hover:border-2 hover:border-[var(--bgc-sidenav)] hover:text-[var(--bgc-sidenav)]">
-                      新しいパスワードをリクエスト
+                    新しいパスワードをリクエスト
                     </button>
                   </div>
                 </form>
   
-                <h5 className="cursor-pointer text-[var(--bgc-sidenav)] pt-4 hover:text-[var(--fontcolor-header)]" onClick={() => navigate("/")}>ログイン</h5>
+                <h5 className="cursor-pointer text-[var(--bgc-sidenav)] pt-4 hover:text-[var(--fontcolor-header)]" onClick={() => navigate("/")}>ログインページへ                </h5>
               </div>
             </div>
           </div>
