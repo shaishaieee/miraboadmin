@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+:root {
+  --fontcolor-side: #c2c7d0;
+  --bgc-sidenav: #343a40;
+  --fontcolor-header: #00000080;
+  --bordercolor: #c2c7d039;
+  --blue: #17a2b8;
+  --darkblue: #148a9d;
+  --yellow: #ffc107;
+  --darkyellow: #d98406;
+  --green: #28a745;
+  --darkgreen: #228e3b;
+  --red: #dc3545;
+  --darkred: #bb2d3b;
+}
+
+
