@@ -34,13 +34,14 @@ const ForgetPassword = () => {
                   </div>
   
                   <div className="flex justify-center w-full h-[40px]">
-                    <button className="w-full text-[16px] bg-[var(--bgc-sidenav)] border-2 border-transparent transition-all duration-1000 ease-in-out rounded-[5px] text-white hover:bg-white hover:border-2 hover:border-[var(--bgc-sidenav)] hover:text-[var(--bgc-sidenav)]">
+                    <button className="w-full text-[16px] bg-[var(--bgc-sidenav)] border-2 border-transparent transition-all duration-1000 ease-in-out text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)]"
+                    onClick={() => navigate("/newpassword")}>
                     新しいパスワードをリクエスト
                     </button>
                   </div>
                 </form>
   
-                <h5 className="cursor-pointer text-[var(--bgc-sidenav)] pt-4 hover:text-[var(--fontcolor-header)]" onClick={() => navigate("/")}>ログインページへ                </h5>
+                <h5 className="cursor-pointer text-[var(--bgc-sidenav)] pt-4 hover:text-[var(--fontcolor-header)]" onClick={() => navigate("/")}>ログインページへ</h5>
               </div>
             </div>
           </div>

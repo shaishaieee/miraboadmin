@@ -21,9 +21,12 @@ const SideNavigation = ({ children }) => {
     ];
   
     const handleLogout = () => {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("authToken");
-      navigate("/");
+      const confirmed = window.confirm("ログアウトしますか？");
+      if (confirmed){
+        localStorage.removeItem("authToken");
+        sessionStorage.removeItem("authToken");
+        navigate("/");
+      }
     };
   
     return (
@@ -35,11 +38,6 @@ const SideNavigation = ({ children }) => {
             <div className="flex justify-start items-center gap-[10px] px-[10px] py-[10px] border-b border-[#c2c7d039]">
               <img className="w-[40px] h-[40px] cursor-pointer bg-white rounded-full shadow-2xl" src={Logo} alt="Logo" />
               <h2 className={`font-light text-[var(--fontcolor-side)] text-[18px] cursor-pointer hover:text-white ${isSideNavMinimized ? "hidden" : ""}`}>Admin MIRABO</h2>
-            </div>
-
-            <div className="flex justify-start items-center gap-[10px] px-[10px] pt-[7px] pb-[10px] m-[5px] border-b border-[#c2c7d039]">
-              <img className="w-[40px] h-[40px] cursor-pointer bg-white rounded-full shadow-2xl" src={Logo} alt="Profile" />
-              <h3 className={`font-semibold text-[var(--fontcolor-side)] text-[14px] cursor-pointer hover:text-white ${isSideNavMinimized ? "hidden" : ""}`}>Alexander Pierce</h3>
             </div>
 
             <div className="mt-[30px]">

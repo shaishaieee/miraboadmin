@@ -72,7 +72,7 @@ const Login = () => {
               </div>
 
               <div className="m-5" >
-              <button className="w-full p-2.5 text-[16px] rounded-[5px] border-2 border-transparent bg-[var(--bgc-sidenav)] text-white cursor-pointer" 
+              <button className="w-full p-2.5 text-[16px] border-2 border-transparent bg-[var(--bgc-sidenav)] text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)] transition-all duration-1000 ease-in-out" 
               onClick={handleSubmition}>サインイン</button>
             </div>
 
