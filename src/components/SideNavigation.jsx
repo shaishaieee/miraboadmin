@@ -5,6 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { IoLogOut } from "react-icons/io5";
 import Logo from "../assets/images/logo.png";
 import Header from "./Header";
+import { FaUsersLine } from "react-icons/fa6";
 
 
 const SideNavigation = ({ children }) => {
@@ -16,6 +17,7 @@ const SideNavigation = ({ children }) => {
     const menuItem = [
       { path: "/dashboard", name: "ダッシュボード", icon: <AiFillDashboard /> },
       { path: "/usermanagement", name: "ユーザー管理", icon: <FaUsers /> },
+      // { path: "/totalusersinfo", name: "合計ユーザー情報", icon: <FaUsersLine />},
       { path: "/userprofile", name: "ユーザープロフィール", icon: <FaUser /> },
       { path: "/csvexcelupload", name: "CSV/Excelアップロード", icon: <FaUpload /> },
     ];
@@ -60,7 +62,7 @@ const SideNavigation = ({ children }) => {
 
           </div>
 
-          <main className={`mt-[10vh] mr-0 mb-[20px] pl-[25px] ${isSideNavMinimized ? "ml-[70px]" : "ml-[250px]"}`}>
+          <main className={`mt-[10vh] mr-0 mb-[20px] ${isSideNavMinimized ? "ml-[70px] w-[calc(100vw - 70px)]" : "ml-[250px] w-[calc(100vw - 250px)]"}`}>
             {children}
           </main>
           

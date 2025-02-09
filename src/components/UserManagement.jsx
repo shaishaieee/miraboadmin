@@ -205,9 +205,12 @@ const UserManagement = () => {
 
   const handleDelete = async (user) => {
     try {
-      await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`);
-      console.log(user.id);
-      setUsers(users.filter((u) => u.id !== user.id));
+      const confirmed = window.confirm("削除しますか?");
+      if (confirmed){
+        await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`);
+        console.log(user.id);
+        setUsers(users.filter((u) => u.id !== user.id));
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -253,9 +256,9 @@ const UserManagement = () => {
 
   const filterUsers = users.filter((user) => {
     return (
-      user.first_name.toLowerCase().includes(searchQuery) ||
-      user.last_name.toLowerCase().includes(searchQuery) ||
-      user.email.toLowerCase().includes(searchQuery)
+      (user.first_name && user.first_name.toLowerCase().includes(searchQuery)) ||
+      (user.last_name && user.last_name.toLowerCase().includes(searchQuery)) ||
+      (user.email && user.email.toLowerCase().includes(searchQuery))
     );
   });
 
@@ -263,20 +266,20 @@ const UserManagement = () => {
 
   return (
     <>
-      <div>
-        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl">ユーザー管理</h1>
-
-        <div className="mx-1 sm:mx-10 md:mx-1 w-full shadow-2xl rounded-md">
+      
+        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
+    
+        <div className="mx-1 rounded-md sm:w-11/20 md:w-1/2 lg:w-full xl:w-full">
           <div className="flex justify-between items-center p-5">
-            <div className="flex items-center">
+            <div className="flex items-center relative">
               <input
                 type="text"
                 placeholder="検索"
-                className="text-base sm:text-lg md:text-xl w-48 sm:w-64 md:w-80 p-2 rounded-l-md border border-[var(--fontcolor-header)]"
+                className="text-base p-3 w-[400px] rounded border border-[var(--fontcolor-header)]"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
-              <i className="text-lg sm:text-xl md:text-2xl py-2 px-3 border-[var(--fontcolor-header)] border-b border-r border-t rounded-r-md">
+              <i className="absolute text-lg sm:text-xl md:text-2xl py-2 px-3 right-1">
                 <FaSearch />
               </i>
             </div>
@@ -285,28 +288,28 @@ const UserManagement = () => {
             </i>
           </div>
 
-          <div className="w-full p-5 overflow-auto" style={{ maxHeight: '600px' }}>
-            <table className="border-collapse w-full min-w-[800px]">
+          <div className="w-full p-5 overflow-auto shadow-sm lg:w-full">
+            <table className="border-collapse lg:w-full">
               <thead>
                 <tr>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-40">
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
                     姓
                     <i className="ml-2" onClick={handleSortLastName}>
                       <LuArrowDownUp />
                     </i>
                   </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-40">
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
                     名
                   </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-52">
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
                     作成日
                     <i onClick={handleSortDate}>
                       <LuArrowDownUp />
                     </i>
                   </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-52">メールアドレス</th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-40">権限</th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start w-24">アクション</th>
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">メールアドレス</th>
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">権限</th>
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">アクション</th>
                 </tr>
               </thead>
 
@@ -356,6 +359,7 @@ const UserManagement = () => {
             </button>
           </div>
         </div>
+  
 
         <UserModal
           isOpen={isModalOpen}
@@ -373,7 +377,6 @@ const UserManagement = () => {
           password={password}
           setPassword={setPassword}
         />
-      </div>
     </>
   );
 };

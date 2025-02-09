@@ -98,7 +98,7 @@ const Dashboard = () => {
       <>
         <div>
           <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
-          <div className="w-full max-w-[1200px] mx-auto">
+          <div className="w-full max-w-[1200px] mx-auto ml-5">
             <div className="flex flex-wrap justify-center items-center gap-[12px]">
               {/* Box 1 */}
               <div className="flex justify-between h-[100px] w-[380px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">

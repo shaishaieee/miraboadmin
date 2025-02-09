@@ -8,6 +8,7 @@ import UserProfile from './components/UserProfile'
 import CsvExcelUpload from './components/CsvExcelUpload'
 import Layout from './components/Layout'
 import NewPassword from './components/NewPassword'
+import TotalUsersInfo from './components/TotalUsersIfo'
 
 
 const App = () => {
@@ -20,10 +21,12 @@ const App = () => {
           <Route path="/" element= {<Login/>}/>
           <Route path="/forgetpassword" element= {<ForgetPassword/>}/>
           <Route path="/newpassword" element= {<NewPassword/>}/>
+          
 
           <Route element={<Layout/>}>
           <Route path="/dashboard" element= {<Dashboard/>}/>
           <Route path="/usermanagement" element= {<UserManagement/>}/>
+          <Route path="/totalusersinfo" element= {<TotalUsersInfo/>}/>
           <Route path="/userprofile" element= {<UserProfile/>}/>
           <Route path="/csvexcelupload" element= {<CsvExcelUpload/>}/>
           </Route>
