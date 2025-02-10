@@ -3,7 +3,7 @@ import { FaBars } from "react-icons/fa";
 const Header = ({ toggleSideNav, isSideNavMinimized }) => {
   return (
     <>
-      <header className="absolute shadow-2xl w-full">
+      <header className="absolute shadow-2xl w-full z-10">
         <div
           className={`flex justify-between items-center py-0 px-4 h-[8vh] ${isSideNavMinimized ? "ml-[70px]" : "ml-[250px]"} sm:px-6 md:px-8`}
         >

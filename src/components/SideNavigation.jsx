@@ -17,7 +17,7 @@ const SideNavigation = ({ children }) => {
     const menuItem = [
       { path: "/dashboard", name: "ダッシュボード", icon: <AiFillDashboard /> },
       { path: "/usermanagement", name: "ユーザー管理", icon: <FaUsers /> },
-      // { path: "/totalusersinfo", name: "合計ユーザー情報", icon: <FaUsersLine />},
+      { path: "/totalusersinfo", name: "合計ユーザー情報", icon: <FaUsersLine />},
       { path: "/userprofile", name: "ユーザープロフィール", icon: <FaUser /> },
       { path: "/csvexcelupload", name: "CSV/Excelアップロード", icon: <FaUpload /> },
     ];
@@ -34,7 +34,7 @@ const SideNavigation = ({ children }) => {
     return (
       <>
         <Header toggleSideNav={toggleSideNav} isSideNavMinimized={isSideNavMinimized} />
-        <div className="flex">
+        <div className="absolute">
           <div className={`fixed bg-[var(--bgc-sidenav)] h-screen shadow-2xl ${isSideNavMinimized ? "w-[70px]" : "w-[250px]"}`}>
 
             <div className="flex justify-start items-center gap-[10px] px-[10px] py-[10px] border-b border-[#c2c7d039]">
