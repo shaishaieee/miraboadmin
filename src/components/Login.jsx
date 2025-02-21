@@ -1,18 +1,32 @@
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import LoginPhoto from "../assets/images/login.png";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { userContext } from "../utils/context";
+import { toast } from "react-toastify";
 
 
 const Login = () => {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const context = userContext()
   const handleSubmition = async (e) => {
     e.preventDefault();
+
+    if (!userEmail || !userPassword) {
+      toast.warning("全てのフィールドを入力してください");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(userEmail)) {
+      toast.warning("有効なメールアドレスを入力してください");
+      return;
+    }
 
     try {
       const response = await axios.post("https://reuvindevs.com/liff/public/api/login", {
@@ -21,18 +35,32 @@ const Login = () => {
       });
   
       if (response.data) {
+        toast.success('ログインに成功しました', { autoClose: 3000 });
         localStorage.setItem("token", response.data.token); 
+        localStorage.setItem("user", JSON.stringify(response.data.user))
+        context.setData(response.data.user)
         navigate("/dashboard");
       } else {
-        alert("Invalid email or password.");
+        toast.error('Invalid email or password.' , { autoClose: 3000 })
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error('メールアドレスまたはパスワードが無効です。' , { autoClose: 3000 })
     }
   }
+  console.log(localStorage);
+  console.log(context.data);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
+  const handleEmailBlur = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(userEmail)) {
+      toast.warning("有効なメールアドレスを入力してください");
+    }
+  };
    
   
     return (
@@ -48,21 +76,25 @@ const Login = () => {
             <form action="">
               <div className="relative w-[320px] m-5 flex items-center">
                 <input className="w-full p-[9px_10px] text-[18px] border border-[var(--fontcolor-header)] rounded"
-                  type="text"
+                  type="email"
                   placeholder="メールアドレス"
                   value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value)}/>
-                <i className="absolute right-2.5">
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  onBlur={handleEmailBlur}/>
+                <i className="p-2 text-[24px] absolute right-3">
                   <FaEnvelope />
                 </i>
               </div>
   
-              <div className="w-[320px] m-5 flex items-center">
+              <div className="relative w-[320px] m-5 flex items-center">
                 <input className="w-full p-[9px_10px] text-[18px] border border-[var(--fontcolor-header)] rounded"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="パスワード"
                   value={userPassword}
                   onChange={(e) => setUserPassword(e.target.value)}/>
+                   <i className="text-[25px] p-2 bg-white absolute right-3 cursor-pointer" onClick={togglePasswordVisibility}>
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </i>
               </div>
   
               <div className="flex justify-end items-center m-[25px_20px]">

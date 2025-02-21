@@ -1,164 +1,251 @@
-import { FaRobot } from "react-icons/fa";
+import { FaRobot, FaUsers } from "react-icons/fa";
 import { FaUsersLine } from "react-icons/fa6";
 import { RiAdvertisementFill } from "react-icons/ri";
-import { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { userContext } from "../utils/context";
+import ApexCharts from 'react-apexcharts';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/themes/material_blue.css';
+import { FaCalendarAlt } from 'react-icons/fa';
 
 const Dashboard = () => {
-
-  const [filter, setFilter] = useState("days");
-
+  const context = userContext();
   const [totalUser, setTotalUser] = useState(null);
   const [totalAds, setTotalAds] = useState([]);
   const [totalGpt, setTotalGpt] = useState([]);
+  const [totalLineUser, setTotalLineUser] = useState([]);
+  const [calendarVisible, setCalendarVisible] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState({ start: "", end: "", key: 0 });
+  const [filteredData, setFilteredData] = useState({
+    user_count: [],
+    ads_count: [],
+    result_count: [],
+    answers_count: [],
+  });
 
+  console.log(filteredData);
 
-  const fetchTotalUser = async () => {
-    try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/user-count')
-      setTotalUser(response.data.user_counts);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    }
+  const token = localStorage.getItem("token");
+
+  const getLatestWeek = () => {
+    const today = new Date();
+    const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+    return {
+      start: firstDayOfWeek.toISOString().split("T")[0],
+      end: lastDayOfWeek.toISOString().split("T")[0],
+    };
   };
 
-  const fetchTotalAds = async () => {
-    try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/ads-count')
-      setTotalAds(response.data.ads_counts);
-      console.log(response.data.ads_counts); 
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    }
-  };
-
-  const fetchTotalGpt = async () => {
-    try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/prompt-count')
-      setTotalGpt(response.data.result_counts);
-      console.log(response.data); 
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchTotalUser();
-  }, []);
-  useEffect(() => {
-    fetchTotalAds();
-  }, []);
-  useEffect(() => {
-    fetchTotalGpt();
-  }, []);
-
-  const data = {
-    days: {
-      categories: ["月曜日", " 火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"],
-      series: [
-        { name: "総ユーザー数", data: [20, 30, 50, 70, 90, 100, 120] },
-        { name: "総ミニアプリ広告再生数", data: [5, 15, 25, 35, 45, 55, 65] },
-        { name: "総GPT応答数", data: [10, 20, 30, 40, 50, 60, 70] },
-      ],
-    },
-    weeks: {
-      categories: ["第1週", "第2週", "第3週", "第4週"],
-      series: [
-        { name: "総ユーザー数", data: [200, 300, 400, 500] },
-        { name: "総ミニアプリ広告再生数", data: [50, 100, 150, 200] },
-        { name: "総GPT応答数", data: [100, 200, 300, 400] },
-      ],
-    },
-    months: {
-      categories: ["1月", "2月", "3月", "4月", "5月"],
-      series: [
-        { name: "総ユーザー数", data: [1000, 1200, 1500, 1700, 2000] },
-        { name: "総ミニアプリ広告再生数", data: [300, 400, 500, 600, 700] },
-        { name: "総GPT応答数", data: [500, 600, 700, 800, 900] },
-      ],
-    },
-  };
-
-  const options = {
-    chart: {
-      type: "line",
-      height: 350,
-    },
-    xaxis: {
-      categories: data[filter].categories,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-  };
+  const fetchData = useCallback(async () => {
+    
   
-    return (
-      <>
-        <div>
-          <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
-          <div className="w-full max-w-[1200px] mx-auto ml-5">
-            <div className="flex flex-wrap justify-center items-center gap-[12px]">
-              {/* Box 1 */}
-              <div className="flex justify-between h-[100px] w-[380px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
-                <div className="box-text">
-                  <h1 className="mb-[5px] text-white text-3xl font-bold">
-                      {totalUser}
-                  </h1>
-                  <h4 className="font-semibold text-white">総ユーザー数</h4>
-                </div>
-                <i className="text-[60px] text-[var(--darkblue)]">
-                  <FaUsersLine />
-                </i>
-              </div>
+    if (!token) {
+      console.error("No token found");
+      setLoading(false);
+      return;
+    }
+  
+    try {
+      
+      const start = selectedDateRange.start || getLatestWeek().start;
+      const end = selectedDateRange.end || getLatestWeek().end;
+  
+      const [userRes, adsRes, gptRes, lineUserRes] = await Promise.all([
+        axios.get("https://reuvindevs.com/liff/public/api/v1/user-count", { 
+          params: { start_date: start, end_date: end }, 
+          headers: { Authorization: `Bearer ${token}` } 
+        }),
+        axios.get("https://reuvindevs.com/liff/public/api/v1/ads-count", { 
+          params: { start_date: start, end_date: end }, 
+          headers: { Authorization: `Bearer ${token}` } 
+        }),
+        axios.get("https://reuvindevs.com/liff/public/api/v1/prompt-count", { 
+          params: { start_date: start, end_date: end }, 
+          headers: { Authorization: `Bearer ${token}` } 
+        }),
+        axios.get("https://reuvindevs.com/liff/public/api/v1/answer-count", { 
+          params: { start_date: start, end_date: end }, 
+          headers: { Authorization: `Bearer ${token}` } 
+        }),
+      ]);
+  
+      setTotalUser(userRes.data.user_count || 0);
+      setTotalAds(adsRes.data.ads_count || 0);
+      setTotalGpt(gptRes.data.result_count || 0);
+      setTotalLineUser(lineUserRes.data.answers_count || 0);
+  
+      setFilteredData({
+        user_count: userRes.data.records || [],
+        ads_count: adsRes.data.records || [],
+        result_count: gptRes.data.records || [],
+        answers_count: lineUserRes.data.records || [],
+      });
+  
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } 
+  }, [selectedDateRange, token]);
 
-              {/* Box 2 */}
-              <div className="flex justify-between h-[100px] w-[380px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
-                <div className="box-text">
-                  <h1 className="mb-[5px] text-white text-3xl font-bold">
-                       {totalAds}
-                  </h1>
-                  <h4 className="font-semibold text-white">総ミニアプリ広告再生数</h4>
-                </div>
-                <i className="text-[60px] text-[var(--darkgreen)]">
-                  <RiAdvertisementFill />
-                </i>
-              </div>
+  const updateChartData = useCallback(() => {
+    if (!filteredData.ads_count.length) return;
 
-              {/* Box 3 */}
-              <div className="flex justify-between h-[100px] w-[380px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
-                <div className="box-text">
-                  <h1 className="mb-[5px] text-white text-3xl font-bold">
-                       {totalGpt}
-                  </h1>
-                  <h4 className="font-semibold text-white">総GPT応答数</h4>
-                </div>
-                <i className="text-[60px] text-[var(--darkyellow)]">
-                  <FaRobot />
-                </i>
+    const adminsData = [];
+    const adsData = [];
+    const chatResponsesData = [];
+    const usersData = [];
+    const categories = [];
+
+    filteredData.ads_count.forEach((entry) => {
+      const date = entry.date;
+
+      const userEntry = filteredData.user_count?.find((item) => item.date === date) || { user_count: 0 };
+      const gptEntry = filteredData.result_count?.find((item) => item.date === date) || { result_count: 0 };
+      const lineUserEntry = filteredData.answers_count?.find((item) => item.date === date) || { answers_count: 0 };
+
+      adminsData.push(userEntry.user_count || 0);
+      adsData.push(entry.ads_count || 0);
+      chatResponsesData.push(gptEntry.result_count || 0);
+      usersData.push(lineUserEntry.answers_count || 0);
+      categories.push(date);
+    });
+
+    setChartOptions((prevOptions) => ({
+      ...prevOptions,
+      series: [
+        { name: "Total Admins", data: adminsData },
+        { name: "Total Played Ads", data: adsData },
+        { name: "Total Chat Responses", data: chatResponsesData },
+        { name: "Total Users", data: usersData },
+      ],
+      xaxis: { categories },
+    }));
+
+    console.log("Updated Chart Data:", { adminsData, adsData, chatResponsesData, usersData, categories });
+
+  }, [filteredData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedDateRange]);
+
+  useEffect(() => {
+    updateChartData();
+  }, [filteredData, updateChartData]);
+
+  useEffect(() => {
+    if (calendarVisible) {
+      flatpickr("#calendar", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        onClose: (selectedDates) => {
+          if (selectedDates.length === 2) {
+            setSelectedDateRange({
+              start: selectedDates[0].toISOString().split("T")[0],
+              end: selectedDates[1].toISOString().split("T")[0],
+              key: Date.now(), 
+            });
+          }
+        }
+      });
+    }
+  }, [calendarVisible]);
+
+  const [chartOptions, setChartOptions] = useState({
+    chart: { type: "line", height: 350 },
+    series: [
+      { name: "Total Admins", data: [] },
+      { name: "Total Played Ads", data: [] },
+      { name: "Total Chat Responses", data: [] },
+      { name: "Total Users", data: [] },
+    ],
+    xaxis: { categories: [] },
+    title: { text: "Line Chatbot Chart" },
+  });
+
+  return (
+    <>
+      <div>
+        <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
+
+        
+        <div className="w-full max-w-[1200px] mx-auto ml-5">
+          <div className="flex flex-wrap justify-center items-center gap-[12px]">
+            {/* Box 1 */}
+            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
+              <div className="box-text">
+                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalUser}</h1>
+                <h4 className="font-semibold text-white">管理者の総数</h4>
               </div>
+              <i className="text-[60px] text-[var(--darkblue)]">
+                <FaUsers />
+              </i>
+            </div>
+
+            {/* Box 2 */}
+            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
+              <div className="box-text">
+                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalAds}</h1>
+                <h4 className="font-semibold text-white">総ミニアプリ広告再生数</h4>
+              </div>
+              <i className="text-[60px] text-[var(--darkgreen)]">
+                <RiAdvertisementFill />
+              </i>
+            </div>
+
+            {/* Box 3 */}
+            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
+              <div className="box-text">
+                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalGpt}</h1>
+                <h4 className="font-semibold text-white">総GPT応答数</h4>
+              </div>
+              <i className="text-[60px] text-[var(--darkyellow)]">
+                <FaRobot />
+              </i>
+            </div>
+
+            {/* Box 4 */}
+            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
+              <div className="box-text">
+                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalLineUser}</h1>
+                <h4 className="font-semibold text-white">総ユーザー数</h4>
+              </div>
+              <i className="text-[60px] text-[var(--darkred)]">
+                <FaUsersLine />
+              </i>
             </div>
           </div>
+        </div>
 
-          <div className="p-6 bg-white shadow-lg rounded-2xl w-full max-w-4xl mx-auto my-20">
-          <div className="flex justify-center gap-4 mb-4">
-            <button onClick={() => setFilter("days")} className={`px-4 py-2 rounded ${filter === "days" ? "bg-[var(--bgc-sidenav)] text-white" : "bg-gray-200"}`}>
-            日別データ
-            </button>
-            <button onClick={() => setFilter("weeks")} className={`px-4 py-2 rounded ${filter === "weeks" ? "bg-[var(--bgc-sidenav)] text-white" : "bg-gray-200"}`}>
-            週別データ
-            </button>
-            <button onClick={() => setFilter("months")} className={`px-4 py-2 rounded ${filter === "months" ? "bg-[var(--bgc-sidenav)] text-white" : "bg-gray-200"}`}>
-            月別データ
-            </button>
+        <div className="mt-10 shadow-2xl p-6 max-w-4xl mx-auto relative">
+          <div
+            onClick={() => setCalendarVisible(!calendarVisible)}
+            className="absolute top-6 right-4 cursor-pointer text-3xl text-[var(--bgc-sidenav)] z-10">
+            <FaCalendarAlt />
           </div>
-          <Chart options={options} series={data[filter].series} type="line" height={350} />
-        </div>
 
+          {calendarVisible && (
+            <div className="absolute top-16 right-4 z-20 bg-white rounded-lg shadow-lg p-4 w-85 border">
+              <input id="calendar" className="border p-2 rounded-md w-full" placeholder="Select Date Range" />
+            </div>
+          )}
+
+         
+              <div className="mt-10 p-6 rounded-lg shadow-lg">
+                <ApexCharts
+                  options={chartOptions}
+                  series={chartOptions.series}
+                  type="line"
+                  height={350}
+                />
+              </div>
+          
         </div>
-      </>
-    );
-  };
-  
-  export default Dashboard;
+      
+      </div>
+    </>
+  );
+};
+
+export default Dashboard;

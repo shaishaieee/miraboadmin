@@ -4,18 +4,20 @@ const Header = ({ toggleSideNav, isSideNavMinimized }) => {
   return (
     <>
       <header className="absolute shadow-2xl w-full z-10">
+        <div >
         <div
-          className={`flex justify-between items-center py-0 px-4 h-[8vh] ${isSideNavMinimized ? "ml-[70px]" : "ml-[250px]"} sm:px-6 md:px-8`}
+          className={`flex justify-between items-center py-0 px-4 h-[8vh] ${isSideNavMinimized ? "xl:ml-[70px] lg:ml-[70px] md:ml-3 sm:ml-1" : "xl:ml-[250px] lg:ml-[250px] md:ml-[70px] sm:ml-[70px]"}`}
         >
-          <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
-            <i className="text-[var(--fontcolor-header)] text-lg sm:text-xl md:text-2xl cursor-pointer" onClick={toggleSideNav}>
+          <div className="flex items-center gap-10">
+            <i className="text-gray-500 text-lg cursor-pointer" onClick={toggleSideNav}>
               <FaBars />
             </i>
 
-            <h4 className="text-[var(--fontcolor-header)] font-bold text-base sm:text-lg md:text-xl">
+            <h4 className="text-[var(--fontcolor-header)] font-bold text-base">
               MIRABO
             </h4>
           </div>
+        </div>
         </div>
       </header>
     </>

@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+@import "tailwindcss";
+@tailwind utilities;
+
 :root {
   --fontcolor-side: #c2c7d0;
   --bgc-sidenav: #343a40;
@@ -12,6 +14,20 @@
   --darkgreen: #228e3b;
   --red: #dc3545;
   --darkred: #bb2d3b;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; 
+  border-top: 16px solid var(--bgc-sidenav); 
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 

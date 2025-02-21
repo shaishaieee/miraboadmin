@@ -1,24 +1,49 @@
 import React, { useState } from "react";
 import Forget from "../assets/images/forget.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const NewPassword = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
+  const email = location.state?.email || "";
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  
 
-
-  const handleSubmit = (e) => {
+  const handlePasswordReset = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-    } else if (password.length < 8) {
-      alert("Password must be at least 8 characters long.");
-    } else {
-      alert("Password successfully updated!");
-      
+
+    if (!newPassword || !confirmPassword) {
+      toast.warning("全てのフィールドを入力してください", { autoClose: 3000 });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.warning("パスワードが一致しません", { autoClose: 3000 });
+      return;
+    }
+
+    try {
+      const response = await axios.post("https://reuvindevs.com/liff/public/api/forgot-password", {
+        email,
+        password: newPassword,
+      });
+
+      if (response.data.success) {
+        toast.success("パスワードが正常にリセットされました", { autoClose: 3000 });
+        navigate("/login");
+      } else {
+        toast.error("パスワードのリセットに失敗しました", { autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Password reset error:", error);
+      toast.error("パスワードのリセット中にエラーが発生しました", { autoClose: 3000 });
     }
   };
+  
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -29,7 +54,7 @@ const NewPassword = () => {
             </h2>
 
             <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handlePasswordReset}>
               <div className="mb-4">
                 <label
                   htmlFor="password"
@@ -41,8 +66,8 @@ const NewPassword = () => {
                   type="password"
                   id="password"
                   name="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={newPasswordassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                   placeholder="新しいパスワードを入力してください"
                   required
@@ -71,7 +96,6 @@ const NewPassword = () => {
               <button
                 type="submit"
                 className="w-full py-2 bg-[var(--bgc-sidenav)] text-white cursor-pointer rounded-md mt-4 hover:bg-[var(--fontcolor-header)] transition-all duration-1000 ease-in-out"
-                onClick={() => navigate("/")}
               >
                 提出する
               </button>

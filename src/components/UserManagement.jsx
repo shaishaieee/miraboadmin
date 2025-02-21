@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch, FaUserEdit } from "react-icons/fa";
+import { FaTrashCan } from "react-icons/fa6";
 import { HiUserAdd } from "react-icons/hi";
 import { LuArrowDownUp } from "react-icons/lu";
-import { TiUserDelete } from "react-icons/ti";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, lastName, setLastName, email, setEmail, role, setRole, password, setPassword }) => {
   useEffect(() => {
@@ -12,7 +14,7 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
       setLastName(user.last_name || "");
       setEmail(user.email || "");
       setRole(user.role || "");
-      setPassword(user.password || "");
+      setPassword("");
     } else {
       setFirstName("");
       setLastName("");
@@ -23,7 +25,7 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
   }, [user, setFirstName, setLastName, setEmail, setRole, setPassword]);
 
   const handleSubmit = () => {
-    if (!firstName || !lastName || !email || !role || !password) {
+    if (!firstName || !lastName || !email || !role || (!user && !password)) {
       alert("全てのフィールドを入力してください");
       return;
     }
@@ -94,28 +96,30 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
               onChange={(e) => setRole(e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-white" htmlFor="password">
-              パスワード
-            </label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full text-white border border-gray-300 rounded-md"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          {!user && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-white" htmlFor="password">
+                パスワード
+              </label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full text-white border border-gray-300 rounded-md"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="flex justify-between">
             <button
               onClick={onClose}
-              className="bg-gray-300 text-gray p-2 rounded-sm hover:bg-gray-400 text-[12px] font-semibold w-20"
+              className="bg-gray-300 text-gray p-2 rounded-sm hover:bg-gray-400 text-[12px] font-semibold w-20 cursor-pointer"
             >
               キャンセル
             </button>
             <button
               onClick={handleSubmit}
-              className="text-[var(--bgc-sidenav)] bg-white p-2 rounded-sm text-[12px] font-semibold w-20 hover:bg-gray-300"
+              className="text-[var(--bgc-sidenav)] bg-white p-2 rounded-sm text-[12px] font-semibold w-20 hover:bg-gray-300 cursor-pointer"
             >
               {user ? "編集" : "追加"} ユーザー
             </button>
@@ -139,11 +143,19 @@ const UserManagement = () => {
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [lastNameSortConfig, setLastNameSortConfig] = useState({
     direction: "ascending"
   });
   const [dateSortConfig, setDateSortConfig] = useState({
     direction: "descending"
+  });
+  const [firstNameSortConfig, setFirstNameSortConfig] = useState({
+    direction: "ascending"
+  });
+  const [emailSortConfig, setEmailSortConfig] = useState({
+    direction: "ascending"
   });
 
   const openAddUserModal = () => {
@@ -167,34 +179,60 @@ const UserManagement = () => {
 
   const openEditModal = (user) => {
     setUser(user);
+    setFirstName(user.first_name || "");
+    setLastName(user.last_name || "");
+    setEmail(user.email || "");
+    setRole(user.role || "");
+    setPassword(""); 
     setIsModalOpen(true);
   }
 
   const fetchUser = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users');
-      console.log(response.data)
-      setUsers(response.data)
+      const token = localStorage.getItem("token");
+      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      setUsers(response.data);
 
       console.log("Fetched Users:", response.data);
     } catch (error) {
-      console.log(error)
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
+  console.log(questions)
   useEffect(() => {
     fetchUser()
   }, [reloadKey])
+  
 
   const handleSave = async (newUser) => {
     console.log("Saving user:", newUser);
     try {
+      const token = localStorage.getItem("token");
       if (user) {
-        await axios.put(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`, newUser);
+        await axios.put(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`, newUser, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers(users.map((u) => (u.email === user.email ? { ...u, ...newUser } : u)));
+        toast.success("ユーザーが正常に更新されました");
       } else {
-        const response = await axios.post(`https://reuvindevs.com/liff/public/api/v1/users`, newUser);
+        const response = await axios.post(`https://reuvindevs.com/liff/public/api/v1/users`, newUser, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers([...users, response.data]);
+        toast.success("ユーザーが正常に追加されました");
       }
       setIsModalOpen(false);
     } catch (error) {
@@ -207,9 +245,15 @@ const UserManagement = () => {
     try {
       const confirmed = window.confirm("削除しますか?");
       if (confirmed){
-        await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`);
+        const token = localStorage.getItem("token");
+        await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log(user.id);
         setUsers(users.filter((u) => u.id !== user.id));
+        toast.success("ユーザーが正常に削除されました");
       }
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -218,9 +262,11 @@ const UserManagement = () => {
 
   const handleSortLastName = () => {
     const direction = lastNameSortConfig.direction === "ascending" ? "descending" : "ascending";
-    const sortUsers = [...users].sort((a, b) =>
-      direction === "ascending" ? a.lastName.localeCompare(b.lastName) : b.lastName.localeCompare(a.lastName)
-    );
+    const sortUsers = [...users].sort((a, b) => {
+      const lastNameA = a.last_name || "";
+      const lastNameB = b.last_name || "";
+      return direction === "ascending" ? lastNameA.localeCompare(lastNameB) : lastNameB.localeCompare(lastNameA);
+    });
     setUsers(sortUsers);
     setLastNameSortConfig({ direction });
   };
@@ -228,10 +274,32 @@ const UserManagement = () => {
   const handleSortDate = () => {
     const direction = dateSortConfig.direction === "ascending" ? "descending" : "ascending";
     const sortUsers = [...users].sort((a, b) =>
-      direction === "ascending" ? new Date(a.dateCreated) - new Date(b.dateCreated) : new Date(b.dateCreated) - new Date(a.dateCreated)
+      direction === "ascending" ? new Date(a.created_at) - new Date(b.created_at) : new Date(b.created_at) - new Date(a.created_at)
     );
     setUsers(sortUsers);
     setDateSortConfig({ direction });
+  };
+
+  const handleSortFirstName = () => {
+    const direction = firstNameSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const sortUsers = [...users].sort((a, b) => {
+      const firstNameA = a.first_name || "";
+      const firstNameB = b.first_name || "";
+      return direction === "ascending" ? firstNameA.localeCompare(firstNameB) : firstNameB.localeCompare(firstNameA);
+    });
+    setUsers(sortUsers);
+    setFirstNameSortConfig({ direction });
+  };
+
+  const handleSortEmail = () => {
+    const direction = emailSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const sortUsers = [...users].sort((a, b) => {
+      const emailA = a.email || "";
+      const emailB = b.email || "";
+      return direction === "ascending" ? emailA.localeCompare(emailB) : emailB.localeCompare(emailA);
+    });
+    setUsers(sortUsers);
+    setEmailSortConfig({ direction });
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -266,10 +334,10 @@ const UserManagement = () => {
 
   return (
     <>
-      
+      <ToastContainer />
         <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
-    
-        <div className="mx-1 rounded-md sm:w-11/20 md:w-1/2 lg:w-full xl:w-full">
+        <div className="flex justify-center w-[calc(100vw-300px)]">
+        <div className="mx-1 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:max-w-full xl:min-w-full">
           <div className="flex justify-between items-center p-5">
             <div className="flex items-center relative">
               <input
@@ -288,76 +356,109 @@ const UserManagement = () => {
             </i>
           </div>
 
-          <div className="w-full p-5 overflow-auto shadow-sm lg:w-full">
-            <table className="border-collapse lg:w-full">
+          <div className="w-full p-5 overflow-auto min-h-[500px] shadow-sm sm:min-w-[100px] md:min-w-[900px] lg:min-w-full">
+            {loading ? (
+              <div className=" flex flex-col justify-center items-center gap-4 min-h-[500px]">
+                <div className="loader"></div>
+                <div>Loading...</div>
+              </div>
+            ) : (
+              <table className="border-collapse lg:w-full">
               <thead>
                 <tr>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]"> 
+                    <div className="flex items-center gap-5">
                     姓
-                    <i className="ml-2" onClick={handleSortLastName}>
+                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortLastName}>
                       <LuArrowDownUp />
                     </i>
+                    </div>
                   </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
+                  <div className="flex items-center gap-5">
                     名
-                  </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
-                    作成日
-                    <i onClick={handleSortDate}>
+                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortFirstName}>
                       <LuArrowDownUp />
                     </i>
+                    </div>
                   </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">メールアドレス</th>
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
+                    <div className="flex items-center gap-5">
+                    作成日
+                    <i className="cursor-pointer hover:text-gray-500" onClick={handleSortDate}>
+                      <LuArrowDownUp />
+                    </i>
+                    </div>
+                  </th>
+                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                  <div className="flex items-center gap-5">
+                    メールアドレス
+                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortEmail}>
+                      <LuArrowDownUp />
+                    </i>
+                    </div>
+                  </th>
                   <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">権限</th>
                   <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">アクション</th>
                 </tr>
               </thead>
 
               <tbody>
-                {currentFilteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td className="border border-[var(--fontcolor-header)] p-2">{user.last_name}</td>
-                    <td className="border border-[var(--fontcolor-header)] p-2">{user.first_name}</td>
-                    <td className="border border-[var(--fontcolor-header)] p-2">{user.created_at}</td>
-                    <td className="border border-[var(--fontcolor-header)] p-2">{user.email}</td>
-                    <td className="border border-[var(--fontcolor-header)] p-2">{user.role}</td>
-                    <td className="border border-[var(--fontcolor-header)] p-2">
-                      <div className="flex justify-center gap-2">
-                        <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => openEditModal(user)}>
-                          <FaUserEdit />
-                        </i>
-                        <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => handleDelete(user)}>
-                          <TiUserDelete />
-                        </i>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {currentFilteredUsers.length > 0 ? (
+                  currentFilteredUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td className="border border-[var(--fontcolor-header)] p-2">{user.last_name}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-2">{user.first_name}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-2">{user.created_at}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-2">{user.email}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-2">{user.role}</td>
+                      <td className="border border-[var(--fontcolor-header)] p-2">
+                        <div className="flex justify-center gap-2">
+                          <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => openEditModal(user)}>
+                            <FaUserEdit />
+                          </i>
+                          <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => handleDelete(user)}>
+                            <FaTrashCan />
+                          </i>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                  <td colSpan="6" className="border border-[var(--fontcolor-header)] p-2 text-center">
+                    No data Found
+                  </td>
+                </tr>
+                )}
               </tbody>
             </table>
+            )}
+            
           </div>
 
-          <div className="flex justify-between mt-4 p-5">
-            <button
-              className="px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer"
-              onClick={handlePreviosPage}
-              disabled={currentPage === 1}
-            >
-              前のページ
-            </button>
+          {users.length > usersPerPage && (
+            <div className="flex justify-between mt-4 p-5">
+              <button
+                className={`flex justify-start px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${currentPage === 1 ? 'invisible' : 'visible'}`}
+                onClick={handlePreviosPage}
+              >
+                前のページ
+              </button>
 
-            <div className="text-sm text-[var(--bgc-sidenav)]">
-              Page {currentPage} of {totalPages}
+              <div className="flex justify-center text-sm text-[var(--bgc-sidenav)]">
+                Page {currentPage} of {totalPages}
+              </div>
+
+              <button
+                className={`flex justify-end px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${currentPage === totalPages ? 'invisible' : 'visible'}`}
+                onClick={handleNextPage}
+              >
+                次のページ
+              </button>
             </div>
-
-            <button
-              className="px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              次のページ
-            </button>
-          </div>
+          )}
+        </div>
         </div>
   
 
