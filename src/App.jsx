@@ -28,11 +28,11 @@ const App = () => {
           
           <Route element={<ProtectedRoutes />}>
             <Route element={<Layout/>}>
-            <Route path="/dashboard" element= {<Dashboard/>}/>
-            <Route path="/usermanagement" element= {<UserManagement/>}/>
-            <Route path="/totalusersinfo" element= {<TotalUsersInfo/>}/>
-            <Route path="/userprofile" element= {<UserProfile/>}/>
-            <Route path="/csvexcelupload" element= {<CsvExcelUpload/>}/>
+            <Route path="dashboard" element= {<Dashboard/>}/>
+            <Route path="usermanagement" element= {<UserManagement/>}/>
+            <Route path="totalusersinfo" element= {<TotalUsersInfo/>}/>
+            <Route path="userprofile" element= {<UserProfile/>}/>
+            <Route path="csvexcelupload" element= {<CsvExcelUpload/>}/>
             </Route>
           </Route>
         </Routes>
