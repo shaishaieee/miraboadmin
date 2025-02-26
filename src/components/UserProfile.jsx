@@ -20,6 +20,8 @@ const UserProfile = () => {
     }
   }, []);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const handlePasswordChange = async (e) => {
     e.preventDefault();
 
@@ -44,7 +46,7 @@ const UserProfile = () => {
       }
     
       const response = await axios.put(
-        `https://reuvindevs.com/liff/public/api/v1/users/${user.id}`,
+        `${apiUrl}/v1/users/${user.id}`,
         { password: newPassword },
         {
           headers: {

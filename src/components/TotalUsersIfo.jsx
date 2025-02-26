@@ -141,7 +141,7 @@ const TotalUsersInfo = () => {
   const [notification, setNotification] = useState("");
   const usersPerPage = 10;
  
-  
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const openUserInfoModal = (user) => {
     setIsModalOpen(true);
@@ -158,7 +158,7 @@ const TotalUsersInfo = () => {
   const fetchUser = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/answers');
+      const response = await axios.get(`${apiUrl}/answers`);
       setUsers(response.data.data.answers);
       console.log("Fetched Users:", response.data.data.answers);
     } catch (error) {
@@ -171,6 +171,8 @@ const TotalUsersInfo = () => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+ 
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -203,16 +205,17 @@ const TotalUsersInfo = () => {
   const handleDeleteUser = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${id}`, {
+      await axios.delete(`${apiUrl}/v1/users/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setUsers(users.filter((user) => user.id !== id));
-      setNotification("User deleted successfully.");
+      // setUsers(users.filter((user) => user.id !== id));
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      setNotification("ユーザーは正常に削除されました。");
       setTimeout(() => {
         setNotification("");
-      }, 3000);
+      }, 500);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -222,7 +225,7 @@ const TotalUsersInfo = () => {
   console.log(users);
 
   return (
-    <>
+    <div className="h-screen overflow-y-auto">
       <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
       <div className="flex justify-center items-center gap-4">
       <div className=" ml-10 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:min-w-full xl:min-w-full">
@@ -317,7 +320,7 @@ const TotalUsersInfo = () => {
         user={selectedObject}
         onDelete={handleDeleteUser}
       />
-    </>
+    </div>
   );
 };
 

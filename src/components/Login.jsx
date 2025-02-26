@@ -13,7 +13,10 @@ const Login = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const context = userContext()
+
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleSubmition = async (e) => {
     e.preventDefault();
 
@@ -29,7 +32,8 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("https://reuvindevs.com/liff/public/api/login", {
+      setLoading(true);
+      const response = await axios.post(`${apiUrl}/login`, {
         email: userEmail,
         password: userPassword,
       });
@@ -46,6 +50,8 @@ const Login = () => {
     } catch (error) {
       console.error("Login error:", error);
       toast.error('メールアドレスまたはパスワードが無効です。' , { autoClose: 3000 })
+    } finally {
+      setLoading(false);
     }
   }
   console.log(localStorage);
@@ -73,7 +79,7 @@ const Login = () => {
           <div className="pt-10 w-[370px] h-[400px]">
             <h3 className="text-center font-normal">サインイン</h3>
   
-            <form action="">
+            <form onSubmit={handleSubmition}>
               <div className="relative w-[320px] m-5 flex items-center">
                 <input className="w-full p-[9px_10px] text-[18px] border border-[var(--fontcolor-header)] rounded"
                   type="email"
@@ -105,7 +111,8 @@ const Login = () => {
 
               <div className="m-5" >
               <button className="w-full p-2.5 text-[16px] border-2 border-transparent bg-[var(--bgc-sidenav)] text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)] transition-all duration-1000 ease-in-out" 
-              onClick={handleSubmition}>サインイン</button>
+              type="submit"
+              disabled={loading}> {loading ? "ログイン中..." : "サインイン"}</button>
             </div>
 
             </form>
@@ -113,8 +120,8 @@ const Login = () => {
   
           <div className="w-[370px] h-[400px] bg-[var(--bgc-sidenav)] p-5">
             <p className="text-center text-white">
-            ようこそ、Mirabo管理ダッシュボードへ！
-            MiraboのLINEチャットボットに関するすべての記録が安全に保存されています。
+            ようこそ、Mirabo質問部屋AI管理ダッシュボードへ！
+            Mirabo質問部屋AIに関する記録がこちらに保存されています。
             </p>
             <img className="w-[380px]" src={LoginPhoto} alt="Login" />
           </div>

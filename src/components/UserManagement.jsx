@@ -191,7 +191,7 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get('https://reuvindevs.com/liff/public/api/v1/users', {
+      const response = await axios.get(`${apiUrl}/v1/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -213,12 +213,13 @@ const UserManagement = () => {
   }, [reloadKey])
   
 
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleSave = async (newUser) => {
     console.log("Saving user:", newUser);
     try {
       const token = localStorage.getItem("token");
       if (user) {
-        await axios.put(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`, newUser, {
+        await axios.put(`${apiUrl}/v1/users/${user.id}`, newUser, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -226,7 +227,7 @@ const UserManagement = () => {
         setUsers(users.map((u) => (u.email === user.email ? { ...u, ...newUser } : u)));
         toast.success("ユーザーが正常に更新されました");
       } else {
-        const response = await axios.post(`https://reuvindevs.com/liff/public/api/v1/users`, newUser, {
+        const response = await axios.post(`${apiUrl}/v1/users`, newUser, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -246,7 +247,7 @@ const UserManagement = () => {
       const confirmed = window.confirm("削除しますか?");
       if (confirmed){
         const token = localStorage.getItem("token");
-        await axios.delete(`https://reuvindevs.com/liff/public/api/v1/users/${user.id}`, {
+        await axios.delete(`${apiUrl}/v1/users/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -333,7 +334,7 @@ const UserManagement = () => {
   const currentFilteredUsers = filterUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-    <>
+    <div className="h-screen overflow-y-auto">
       <ToastContainer />
         <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
         <div className="flex justify-center w-[calc(100vw-300px)]">
@@ -478,7 +479,7 @@ const UserManagement = () => {
           password={password}
           setPassword={setPassword}
         />
-    </>
+    </div>
   );
 };
 

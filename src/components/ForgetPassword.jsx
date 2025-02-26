@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 const ForgetPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleRequestNewPassword = async (e) => {
     e.preventDefault();
@@ -19,7 +20,7 @@ const ForgetPassword = () => {
     }
 
     try {
-      const response = await axios.post("https://reuvindevs.com/liff/public/api/forgot-password", { email });
+      const response = await axios.post(`${apiUrl}/forgot-password`, { email });
 
       if (response.data.message) {
         navigate("/", { state: { email } });

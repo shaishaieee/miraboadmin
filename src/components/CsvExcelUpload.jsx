@@ -1,39 +1,53 @@
-import { useState,  useCallback } from "react";
+import { useState,  useCallback, useRef } from "react";
 import axios from "axios";
 import { debounce } from "lodash"; 
 import { toast } from "react-toastify";
 
 const CsvExcelUpload = () => {
-  const [excelFile, setExcelFile] = useState(null);
-  const [typeError, setTypeError] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token");
 
   const uploadFileToAPI = useCallback(
     debounce(async (file) => {
       if (!file) return;
-
-      setUploadStatus("アップロード中...");
-
       const formData = new FormData();
       formData.append("file", file);
 
       try {
+        setUploading(true);
         const response = await axios.post(
-          "https://reuvindevs.com/liff/public/api/import",
+          `${apiUrl}/v1/import`,
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
+
+            onUploadProgress: (progressEvent) => {
+              const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setUploadProgress(progress);
+            }
           }
         );
 
         toast.success("ファイルが正常にアップロードされました")
-        setUploadStatus("アップロード成功しました!");
       } catch (error) {
         console.error("❌ Upload Error:", error);
-        toast.error("ファイルのアップロードに失敗しました")
-        setUploadStatus("アップロードに失敗しました。");
+          if (error.response && error.response.status === 500 && error.response.data.message.includes('Undefined array key "question_number"')) {
+            toast.error("Excel の形式が間違っています。有効な Excel ファイル (.xls、.xlsx、.csv) を選択してください。");
+          } else {
+            toast.error("ファイルのアップロードに失敗しました");
+          }
+      } finally{
+        setUploading(false);
+        setUploadProgress(0);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
     }, 2000),
     []
@@ -46,20 +60,11 @@ const CsvExcelUpload = () => {
       "text/csv",
     ];
     let selectedFile = e.target.files[0];
-
     if (selectedFile) {
       if (fileTypes.includes(selectedFile.type)) {
-        setTypeError(null);
-        setExcelFile(selectedFile);
-
         uploadFileToAPI(selectedFile);
-      } else {
-        setTypeError("Excelファイル (.xls, .xlsx, .csv) のみを選択してください");
-        setExcelFile(null);
-      }
-    } else {
-      console.log("ファイルを選択してください");
-    }
+      } 
+    } 
   };
   
     return (
@@ -78,12 +83,16 @@ const CsvExcelUpload = () => {
                   className="text-[16px] w-full rounded-[5px] shadow-2xl outline-0 cursor-pointer"
                   required
                   onChange={handleFile}
+                  ref={fileInputRef}
                 />
               </form>
-  
-              {typeError && (
-                <div className="my-1 py-[10px] px-[20px] bg-[#ffb3b3] text-[#ff0000] rounded-[5px]" role="alert">
-                  {typeError}
+
+              {uploading && (
+                <div className="my-1 py-[10px] px-[20px] bg-[#e0e0e0] text-[#000000] rounded-[5px]" role="alert">
+                  アップロード中... {uploadProgress}%
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                  </div>
                 </div>
               )}
             </div>

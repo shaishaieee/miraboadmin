@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [totalGpt, setTotalGpt] = useState([]);
   const [totalLineUser, setTotalLineUser] = useState([]);
   const [calendarVisible, setCalendarVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedDateRange, setSelectedDateRange] = useState({ start: "", end: "", key: 0 });
   const [filteredData, setFilteredData] = useState({
     user_count: [],
@@ -38,54 +39,64 @@ const Dashboard = () => {
     };
   };
 
+
   const fetchData = useCallback(async () => {
-    
-  
+
+
     if (!token) {
       console.error("No token found");
       setLoading(false);
       return;
     }
-  
+
+
+    const start = selectedDateRange.start || getLatestWeek().start;
+    const end = selectedDateRange.end || getLatestWeek().end;
+
+    const apiUrl = import.meta.env.VITE_API_URL; // Import Url Source from .env
+
     try {
-      
-      const start = selectedDateRange.start || getLatestWeek().start;
-      const end = selectedDateRange.end || getLatestWeek().end;
-  
       const [userRes, adsRes, gptRes, lineUserRes] = await Promise.all([
-        axios.get("https://reuvindevs.com/liff/public/api/v1/user-count", { 
-          params: { start_date: start, end_date: end }, 
-          headers: { Authorization: `Bearer ${token}` } 
+        axios.get(`${apiUrl}/v1/user-count`, {
+          params: { start_date: start, end_date: end },
+          headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("https://reuvindevs.com/liff/public/api/v1/ads-count", { 
-          params: { start_date: start, end_date: end }, 
-          headers: { Authorization: `Bearer ${token}` } 
+        axios.get(`${apiUrl}/v1/ads-count`, {
+          params: { start_date: start, end_date: end },
+          headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("https://reuvindevs.com/liff/public/api/v1/prompt-count", { 
-          params: { start_date: start, end_date: end }, 
-          headers: { Authorization: `Bearer ${token}` } 
+        axios.get(`${apiUrl}/v1/prompt-count`, {
+          params: { start_date: start, end_date: end },
+          headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("https://reuvindevs.com/liff/public/api/v1/answer-count", { 
-          params: { start_date: start, end_date: end }, 
-          headers: { Authorization: `Bearer ${token}` } 
+        axios.get(`${apiUrl}/v1/answer-count`, {
+          params: { start_date: start, end_date: end },
+          headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
-  
+
+      // console.log("User Response:", userRes.data);
+      // console.log("Ads Response:", adsRes.data);
+      // console.log("GPT Response:", gptRes.data);
+      // console.log("Line User Response:", lineUserRes.data);
+
       setTotalUser(userRes.data.user_count || 0);
       setTotalAds(adsRes.data.ads_count || 0);
       setTotalGpt(gptRes.data.result_count || 0);
       setTotalLineUser(lineUserRes.data.answers_count || 0);
-  
+
       setFilteredData({
         user_count: userRes.data.records || [],
         ads_count: adsRes.data.records || [],
         result_count: gptRes.data.records || [],
         answers_count: lineUserRes.data.records || [],
       });
-  
+
     } catch (error) {
       console.error("Error fetching data:", error);
-    } 
+    } finally {
+      setLoading(false);
+    }
   }, [selectedDateRange, token]);
 
   const updateChartData = useCallback(() => {
@@ -144,7 +155,7 @@ const Dashboard = () => {
             setSelectedDateRange({
               start: selectedDates[0].toISOString().split("T")[0],
               end: selectedDates[1].toISOString().split("T")[0],
-              key: Date.now(), 
+              key: Date.now(),
             });
           }
         }
@@ -165,73 +176,82 @@ const Dashboard = () => {
   });
 
   return (
-    <>
-      <div>
-        <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
-
-        
-        <div className="w-full max-w-[1200px] mx-auto ml-5">
-          <div className="flex flex-wrap justify-center items-center gap-[12px]">
-            {/* Box 1 */}
-            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
-              <div className="box-text">
-                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalUser}</h1>
-                <h4 className="font-semibold text-white">管理者の総数</h4>
-              </div>
-              <i className="text-[60px] text-[var(--darkblue)]">
-                <FaUsers />
-              </i>
-            </div>
-
-            {/* Box 2 */}
-            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
-              <div className="box-text">
-                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalAds}</h1>
-                <h4 className="font-semibold text-white">総ミニアプリ広告再生数</h4>
-              </div>
-              <i className="text-[60px] text-[var(--darkgreen)]">
-                <RiAdvertisementFill />
-              </i>
-            </div>
-
-            {/* Box 3 */}
-            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
-              <div className="box-text">
-                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalGpt}</h1>
-                <h4 className="font-semibold text-white">総GPT応答数</h4>
-              </div>
-              <i className="text-[60px] text-[var(--darkyellow)]">
-                <FaRobot />
-              </i>
-            </div>
-
-            {/* Box 4 */}
-            <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
-              <div className="box-text">
-                <h1 className="mb-[5px] text-white text-3xl font-bold">{totalLineUser}</h1>
-                <h4 className="font-semibold text-white">総ユーザー数</h4>
-              </div>
-              <i className="text-[60px] text-[var(--darkred)]">
-                <FaUsersLine />
-              </i>
-            </div>
+    <div className="h-screen overflow-y-auto">
+      {loading ? (
+          <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full">
+            <div className="loader"></div>
+            <div>Loading...</div>
           </div>
-        </div>
+      ) : (
+          <div>
+            <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
 
-        <div className="mt-10 shadow-2xl p-6 max-w-4xl mx-auto relative">
-          <div
-            onClick={() => setCalendarVisible(!calendarVisible)}
-            className="absolute top-6 right-4 cursor-pointer text-3xl text-[var(--bgc-sidenav)] z-10">
-            <FaCalendarAlt />
-          </div>
 
-          {calendarVisible && (
-            <div className="absolute top-16 right-4 z-20 bg-white rounded-lg shadow-lg p-4 w-85 border">
-              <input id="calendar" className="border p-2 rounded-md w-full" placeholder="Select Date Range" />
+            <div className="w-full max-w-[1200px] mx-auto ml-5">
+              <div className="flex flex-wrap justify-center items-center gap-[12px]">
+                {/* Box 1 */}
+                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
+                  <div className="box-text">
+                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalUser}</h1>
+                    <h4 className="font-semibold text-white">管理者の総数</h4>
+                  </div>
+                  <i className="text-[60px] text-[var(--darkblue)]">
+                    <FaUsers />
+                  </i>
+                </div>
+
+                {/* Box 2 */}
+                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
+                  <div className="box-text">
+                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalAds}</h1>
+                    <h4 className="font-semibold text-white">総ミニアプリ広告再生数</h4>
+                  </div>
+                  <i className="text-[60px] text-[var(--darkgreen)]">
+                    <RiAdvertisementFill />
+                  </i>
+                </div>
+
+                {/* Box 3 */}
+                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
+                  <div className="box-text">
+                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalGpt}</h1>
+                    <h4 className="font-semibold text-white">総GPT応答数</h4>
+                  </div>
+                  <i className="text-[60px] text-[var(--darkyellow)]">
+                    <FaRobot />
+                  </i>
+                </div>
+
+                {/* Box 4 */}
+                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
+                  <div className="box-text">
+                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalLineUser}</h1>
+                    <h4 className="font-semibold text-white">総ユーザー数</h4>
+                  </div>
+                  <i className="text-[60px] text-[var(--darkred)]">
+                    <FaUsersLine />
+                  </i>
+                </div>
+              </div>
             </div>
-          )}
 
-         
+          
+            <div className="mb-20 mt-10 shadow-2xl p-6 max-w-4xl mx-auto relative">
+              <div
+                onClick={() => setCalendarVisible(!calendarVisible)}
+                className="absolute top-6 right-4 cursor-pointer text-3xl text-[var(--bgc-sidenav)] z-10">
+                <FaCalendarAlt />
+              </div>
+
+              {calendarVisible && (
+                <div className="absolute top-16 right-4 z-20 bg-white rounded-lg shadow-lg p-4 w-85 border">
+                  <input id="calendar" className="border p-2 rounded-md w-full" placeholder="Select Date Range" />
+                </div>
+              )}
+
+
+
+
               <div className="mt-10 p-6 rounded-lg shadow-lg">
                 <ApexCharts
                   options={chartOptions}
@@ -240,11 +260,10 @@ const Dashboard = () => {
                   height={350}
                 />
               </div>
-          
-        </div>
-      
-      </div>
-    </>
+            </div>
+          </div>
+     )}    
+    </div>
   );
 };
 
