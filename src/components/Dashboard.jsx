@@ -125,10 +125,10 @@ const Dashboard = () => {
     setChartOptions((prevOptions) => ({
       ...prevOptions,
       series: [
-        { name: "Total Admins", data: adminsData },
-        { name: "Total Played Ads", data: adsData },
-        { name: "Total Chat Responses", data: chatResponsesData },
-        { name: "Total Users", data: usersData },
+        { name: "管理者の総数", data: adminsData },
+        { name: "総ミニアプリ広告再生数", data: adsData },
+        { name: "総GPT応答数", data: chatResponsesData },
+        { name: "総ユーザー数", data: usersData },
       ],
       xaxis: { categories },
     }));
@@ -166,10 +166,10 @@ const Dashboard = () => {
   const [chartOptions, setChartOptions] = useState({
     chart: { type: "line", height: 350 },
     series: [
-      { name: "Total Admins", data: [] },
-      { name: "Total Played Ads", data: [] },
-      { name: "Total Chat Responses", data: [] },
-      { name: "Total Users", data: [] },
+      { name: "管理者の総数", data: [] },
+      { name: "総ミニアプリ広告再生数", data: [] },
+      { name: "総GPT応答数", data: [] },
+      { name: "総ユーザー数", data: [] },
     ],
     xaxis: { categories: [] },
     title: { text: "Line Chatbot Chart" },

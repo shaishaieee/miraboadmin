@@ -303,10 +303,6 @@ const UserManagement = () => {
     setEmailSortConfig({ direction });
   };
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const totalPages = Math.ceil(users.length / usersPerPage);
-
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -331,14 +327,20 @@ const UserManagement = () => {
     );
   });
 
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const totalPages = Math.ceil(filterUsers.length / usersPerPage);
   const currentFilteredUsers = filterUsers.slice(indexOfFirstUser, indexOfLastUser);
 
+  
+
   return (
-    <div className="h-screen overflow-y-auto">
+    <div className="h-screen overflow-y-auto my-10">
+      <div>
       <ToastContainer />
         <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
         <div className="flex justify-center w-[calc(100vw-300px)]">
-        <div className="mx-1 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:max-w-full xl:min-w-full">
+        <div className="mx-1 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:max-w-full xl:min-w-full mb-[100px]">
           <div className="flex justify-between items-center p-5">
             <div className="flex items-center relative">
               <input
@@ -438,8 +440,8 @@ const UserManagement = () => {
             
           </div>
 
-          {users.length > usersPerPage && (
-            <div className="flex justify-between mt-4 p-5">
+          {filterUsers.length > usersPerPage && (
+            <div className="flex justify-between mt-4 p-5 mb-20 ">
               <button
                 className={`flex justify-start px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${currentPage === 1 ? 'invisible' : 'visible'}`}
                 onClick={handlePreviosPage}
@@ -479,6 +481,7 @@ const UserManagement = () => {
           password={password}
           setPassword={setPassword}
         />
+        </div>
     </div>
   );
 };

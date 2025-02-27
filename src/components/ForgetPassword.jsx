@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 const ForgetPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleRequestNewPassword = async (e) => {
@@ -16,6 +17,7 @@ const ForgetPassword = () => {
 
     if (!email) {
       toast.warning("メールアドレスを入力してください");
+      setError("メールアドレスを入力してください");
       return;
     }
 
@@ -27,12 +29,32 @@ const ForgetPassword = () => {
         toast.success("パスワードのリセットがメールに正常に送信されました");
       } else {
         toast.warning("メールアドレスが見つかりません");
+        setError("メールアドレスが見つかりません");
       }
     } catch (error) {
       console.error("Error checking email:", error);
       toast.error("メールアドレスの確認中にエラーが発生しました");
+      setError("メールアドレスの確認中にエラーが発生しました");
     }
   };
+
+
+  const handleEmailBlur = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      toast.warning("有効なメールアドレスを入力してください");
+    }
+  };
+
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    setError("");
+  };
+  
+  const handleInputFocus = () => {
+    setError("");
+  }
+
     
     return (
       <>
@@ -42,7 +64,7 @@ const ForgetPassword = () => {
               Admin <span className="text-[var(--bgc-sidenav)] font-light">MIRABO</span>
             </h1>
   
-            <div className="mb-[60px] shadow-2xl"> 
+            <div className="mb-[60px] shadow-2xl h-[500px]"> 
               <div className="flex justify-center items-center w-[400px] h-[200px] bg-[var(--bgc-sidenav)] px-[30px} py-[20px]">
                 <img className="w-[200px]" src={Forget} alt="Forget Password" />
                 <p className="text-white items-center mr-[20px]">
@@ -57,18 +79,23 @@ const ForgetPassword = () => {
                 <form 
                 onSubmit={handleRequestNewPassword} 
                 >
-                  <div className="relative flex justify-center w-full my-[20px] mx-0">
-                    <input className="w-full p-[10px] text-[16px] border-[1px] border-[var(--bgc-sidenav)] rounded-[5px]" 
-                    type="email" 
-                    placeholder="メールアドレス"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)} />
-                    <i className="absolute text-[20px] right-[20px] top-[11px]">
-                      <FaEnvelope />
-                    </i>
+                  <div>
+                    <div className="relative flex justify-center w-full mt-[20px] mx-0">
+                      <input className={`w-full p-[10px] text-[16px] border-[1px] border-[var(--bgc-sidenav)] rounded-[5px] ${error ? 'border-red-500' : 'border-[var(--fontcolor-header)]'}`} 
+                      type="email" 
+                      placeholder="メールアドレス"
+                      value={email}
+                      onChange={handleInputChange(setEmail)}
+                      onBlur={handleEmailBlur}
+                      onFocus={handleInputFocus}/>
+                      <i className={`absolute text-[20px] right-[20px] top-[11px] ${error ? 'text-red-500' : 'text-[var(--fontcolor-header)]'}`}>
+                        <FaEnvelope />
+                      </i>
+                    </div>
+                    <p className={`text-red-500 text-sm my-0.5 h-5 ${error ? 'visible' : 'invisible'}`}>{error}</p>
                   </div>
   
-                  <div className="flex justify-center w-full h-[40px]">
+                  <div className="flex justify-center w-full mt-5 h-[40px]">
                     <button className="w-full text-[16px] bg-[var(--bgc-sidenav)] border-2 border-transparent transition-all duration-1000 ease-in-out text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)]"
                     type="submit">
                     新しいパスワードをリクエスト
