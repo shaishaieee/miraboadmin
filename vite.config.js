@@ -12,5 +12,8 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_ENV__: env, // Use a custom variable instead of process.env
     },
+    server: {
+      historyApiFallback: true
+    }
   };
 });
