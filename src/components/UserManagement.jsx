@@ -24,9 +24,19 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
     }
   }, [user, setFirstName, setLastName, setEmail, setRole, setPassword]);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = () => {
     if (!firstName || !lastName || !email || !role || (!user && !password)) {
-      alert("全てのフィールドを入力してください");
+      toast.warning("全てのフィールドを入力してください");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.warning("無効な電子メール形式");
       return;
     }
 
@@ -40,6 +50,8 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
     onSave(newUser);
     onClose();
   };
+
+
 
   return (
     isOpen && (
@@ -210,7 +222,11 @@ const UserManagement = () => {
   console.log(questions)
   useEffect(() => {
     fetchUser()
-  }, [reloadKey])
+  }, [reloadKey]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
   
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -237,6 +253,7 @@ const UserManagement = () => {
       }
       setIsModalOpen(false);
     } catch (error) {
+      toast.error("電子メールが存在します");
       console.error("Error saving user:", error);
     }
     setReloadKey((prevKey) => prevKey + 1);

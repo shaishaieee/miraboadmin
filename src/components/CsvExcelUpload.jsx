@@ -1,7 +1,7 @@
 import { useState,  useCallback, useRef } from "react";
 import axios from "axios";
 import { debounce } from "lodash"; 
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const CsvExcelUpload = () => {
   const [uploading, setUploading] = useState(false);
@@ -38,7 +38,7 @@ const CsvExcelUpload = () => {
       } catch (error) {
         console.error("❌ Upload Error:", error);
           if (error.response && error.response.status === 500 && error.response.data.message.includes('Undefined array key "question_number"')) {
-            toast.error("Excel の形式が間違っています。有効な Excel ファイル (.xls、.xlsx、.csv) を選択してください。");
+            toast.error("Excelの形式が間違っています。");
           } else {
             toast.error("ファイルのアップロードに失敗しました");
           }
@@ -69,6 +69,7 @@ const CsvExcelUpload = () => {
   
     return (
       <>
+      <ToastContainer/>
         <div>
           <h1 className="ml-[20px] font-semibold mb-5">Excelアップロード</h1>
   

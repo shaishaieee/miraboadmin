@@ -1,8 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../utils/context";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -26,14 +26,18 @@ const UserProfile = () => {
     e.preventDefault();
 
     if ( !newPassword || !confirmPassword) {
+      console.log("Missing fields");
       toast.warning("全てのフィールドを入力してください", { autoClose: 3000 });
       return;
     }
 
     if (newPassword !== confirmPassword) {
+      console.log("Passwords do not match"); 
       toast.warning("新しいパスワードが一致しません", { autoClose: 3000 });
       return;
     }
+
+    console.log("Sending request to API...");
 
     try {
       const token = localStorage.getItem("token");
@@ -55,10 +59,11 @@ const UserProfile = () => {
           },
         }
       );
-    
+
+      console.log("API response:", response.data);
       console.log("this is the response", response.data);
     
-      if (response) {
+      if (response.status === 200) {
         toast.success("パスワードが正常に更新されました", { autoClose: 3000 });
         setNewPassword("");
         setConfirmPassword("");
@@ -88,6 +93,7 @@ const UserProfile = () => {
 
   return (
     <>
+    <ToastContainer/>
       <div>
         <div className="flex justify-center items-center min-h-screen w-[calc(100vw-300px)] ">
           <div className="bg-white p-8 rounded-lg shadow-xl w-full sm:max-w-md mx-4">
