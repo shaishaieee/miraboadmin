@@ -26,7 +26,7 @@ const ForgetPassword = () => {
 
       if (response.data.message) {
         navigate("/", { state: { email } });
-        toast.success("パスワードのリセットがメールに正常に送信されました");
+        alert("パスワードのリセットがメールに正常に送信されました");
       } else {
         toast.warning("メールアドレスが見つかりません");
         setError("メールアドレスが見つかりません");
@@ -59,6 +59,7 @@ const ForgetPassword = () => {
     return (
       <>
       <ToastContainer/>
+    
         <main>
           <div className="flex flex-col items-center">
             <h1 className="text-[var(--bgc-sidenav)] mt-[70px] mb-5 font-semibold text-3xl">
