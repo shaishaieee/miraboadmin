@@ -3,7 +3,7 @@ import Forget from "../assets/images/forget.png";
 import { FaEnvelope } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 
 const ForgetPassword = () => {
@@ -58,6 +58,7 @@ const ForgetPassword = () => {
     
     return (
       <>
+      <ToastContainer/>
         <main>
           <div className="flex flex-col items-center">
             <h1 className="text-[var(--bgc-sidenav)] mt-[70px] mb-5 font-semibold text-3xl">
