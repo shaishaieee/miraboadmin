@@ -5,7 +5,7 @@ import { data, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { userContext } from "../utils/context";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 
 const Login = () => {
@@ -85,7 +85,6 @@ const Login = () => {
 
     return (
       <>
-      <ToastContainer/>
       <div className="h-screen flex flex-col justify-center items-center">
         <h1 className="text-4xl font-medium my-4 text-[var(--bgc-sidenav)]">
           Admin <span className="font-light">MIRABO</span>
