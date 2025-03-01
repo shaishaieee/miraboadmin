@@ -45,7 +45,7 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
  
 
   const handleDelete = () => {
-      onDelete(user.id);
+      onDelete(user?.id);
   };
 
   
@@ -196,6 +196,7 @@ const TotalUsersInfo = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [trigger, setTrigger] = useState(false);
   const usersPerPage = 10;
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -224,7 +225,32 @@ const TotalUsersInfo = () => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+    console.log("Triggered useEffect")
+  }, [trigger]);
+
+  const handleDeleteUser = async (id) => {
+    const confirmed = window.confirm("削除しますか?");
+    if (!confirmed) return;
+  
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${apiUrl}/v1/delete-answer/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("ユーザーが正常に削除されました");
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+  
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.warning("処理中にエラーが発生しました。もう一度試してください。");
+      console.error("Error deleting user:", error);
+    }
+  };
+  
+
+  console.log("This is trigger" + trigger);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -255,27 +281,7 @@ const TotalUsersInfo = () => {
     }
   };
 
-  const handleDeleteUser = async (id) => {
-    try {
-      const confirmed = window.confirm("削除しますか?");
-      if (confirmed){
-        const token = localStorage.getItem("token");
-        await axios.delete(`${apiUrl}/v1/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log(id);
-        toast.success("ユーザーが正常に削除されました");
-        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-        setIsModalOpen(false);
-      }
-    } catch (error) {
-      toast.warning("処理中にエラーが発生しました。もう一度試してください。");
-      console.error("Error deleting user:", error);
-    }
-  };
+  
 
 
   return (
