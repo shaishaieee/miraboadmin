@@ -7,7 +7,22 @@ import { LuArrowDownUp } from "react-icons/lu";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, lastName, setLastName, email, setEmail, role, setRole, password, setPassword }) => {
+const UserModal = ({
+  isOpen,
+  onClose,
+  user,
+  onSave,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  email,
+  setEmail,
+  role,
+  setRole,
+  password,
+  setPassword,
+}) => {
   useEffect(() => {
     if (user) {
       setFirstName(user.first_name || "");
@@ -51,8 +66,6 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
     onClose();
   };
 
-
-
   return (
     isOpen && (
       <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm shadow-2xl">
@@ -62,7 +75,10 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
           </h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-white" htmlFor="firstName">
+            <label
+              className="block text-sm font-medium text-white"
+              htmlFor="firstName"
+            >
               名
             </label>
             <input
@@ -74,7 +90,10 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-white" htmlFor="lastName">
+            <label
+              className="block text-sm font-medium text-white"
+              htmlFor="lastName"
+            >
               姓
             </label>
             <input
@@ -86,7 +105,10 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-white" htmlFor="email">
+            <label
+              className="block text-sm font-medium text-white"
+              htmlFor="email"
+            >
               メールアドレス
             </label>
             <input
@@ -98,7 +120,10 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-white" htmlFor="role">
+            <label
+              className="block text-sm font-medium text-white"
+              htmlFor="role"
+            >
               権限
             </label>
             <input
@@ -110,7 +135,10 @@ const UserModal = ({ isOpen, onClose, user, onSave, firstName, setFirstName, las
           </div>
           {!user && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-white" htmlFor="password">
+              <label
+                className="block text-sm font-medium text-white"
+                htmlFor="password"
+              >
                 パスワード
               </label>
               <input
@@ -158,27 +186,27 @@ const UserManagement = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [lastNameSortConfig, setLastNameSortConfig] = useState({
-    direction: "ascending"
+    direction: "ascending",
   });
   const [dateSortConfig, setDateSortConfig] = useState({
-    direction: "descending"
+    direction: "descending",
   });
   const [firstNameSortConfig, setFirstNameSortConfig] = useState({
-    direction: "ascending"
+    direction: "ascending",
   });
   const [emailSortConfig, setEmailSortConfig] = useState({
-    direction: "ascending"
+    direction: "ascending",
   });
 
   const openAddUserModal = () => {
     setUser(null);
-    setFirstName('');
-    setLastName('');
-    setEmail('');
-    setRole('');
-    setPassword('');
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setRole("");
+    setPassword("");
     setIsModalOpen(true);
-  }
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -195,9 +223,9 @@ const UserManagement = () => {
     setLastName(user.last_name || "");
     setEmail(user.email || "");
     setRole(user.role || "");
-    setPassword(""); 
+    setPassword("");
     setIsModalOpen(true);
-  }
+  };
 
   // const fetchUser = async () => {
   //   setLoading(true);
@@ -229,9 +257,11 @@ const UserManagement = () => {
         },
       });
       console.log(response.data);
-      const sortedUsers = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const sortedUsers = response.data.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
       setUsers(sortedUsers);
-  
+
       console.log("Fetched Users:", sortedUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -240,15 +270,14 @@ const UserManagement = () => {
     }
   };
 
-  console.log(questions)
+  console.log(questions);
   useEffect(() => {
-    fetchUser()
+    fetchUser();
   }, [reloadKey]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
-  
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleSave = async (newUser) => {
@@ -261,14 +290,20 @@ const UserManagement = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(users.map((u) => (u.email === user.email ? { ...u, ...newUser } : u)));
+        setUsers(
+          users.map((u) => (u.email === user.email ? { ...u, ...newUser } : u))
+        );
         toast.success("ユーザーが正常に更新されました");
       } else {
-        const response = await axios.post(`${apiUrl}/v1/users`, { ...newUser, created_at: new Date().toISOString() }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.post(
+          `${apiUrl}/v1/users`,
+          { ...newUser, created_at: new Date().toISOString() },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsers((prevUsers) => [response.data, ...prevUsers]); // Prepend the new user to the users array
         toast.success("ユーザーが正常に追加されました");
       }
@@ -283,7 +318,7 @@ const UserManagement = () => {
   const handleDelete = async (user) => {
     try {
       const confirmed = window.confirm("削除しますか?");
-      if (confirmed){
+      if (confirmed) {
         const token = localStorage.getItem("token");
         await axios.delete(`${apiUrl}/v1/users/${user.id}`, {
           headers: {
@@ -300,42 +335,56 @@ const UserManagement = () => {
   };
 
   const handleSortLastName = () => {
-    const direction = lastNameSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const direction =
+      lastNameSortConfig.direction === "ascending" ? "descending" : "ascending";
     const sortUsers = [...users].sort((a, b) => {
       const lastNameA = a.last_name || "";
       const lastNameB = b.last_name || "";
-      return direction === "ascending" ? lastNameA.localeCompare(lastNameB) : lastNameB.localeCompare(lastNameA);
+      return direction === "ascending"
+        ? lastNameA.localeCompare(lastNameB)
+        : lastNameB.localeCompare(lastNameA);
     });
     setUsers(sortUsers);
     setLastNameSortConfig({ direction });
   };
 
   const handleSortDate = () => {
-    const direction = dateSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const direction =
+      dateSortConfig.direction === "ascending" ? "descending" : "ascending";
     const sortUsers = [...users].sort((a, b) =>
-      direction === "ascending" ? new Date(a.created_at) - new Date(b.created_at) : new Date(b.created_at) - new Date(a.created_at)
+      direction === "ascending"
+        ? new Date(a.created_at) - new Date(b.created_at)
+        : new Date(b.created_at) - new Date(a.created_at)
     );
     setUsers(sortUsers);
     setDateSortConfig({ direction });
   };
 
   const handleSortFirstName = () => {
-    const direction = firstNameSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const direction =
+      firstNameSortConfig.direction === "ascending"
+        ? "descending"
+        : "ascending";
     const sortUsers = [...users].sort((a, b) => {
       const firstNameA = a.first_name || "";
       const firstNameB = b.first_name || "";
-      return direction === "ascending" ? firstNameA.localeCompare(firstNameB) : firstNameB.localeCompare(firstNameA);
+      return direction === "ascending"
+        ? firstNameA.localeCompare(firstNameB)
+        : firstNameB.localeCompare(firstNameA);
     });
     setUsers(sortUsers);
     setFirstNameSortConfig({ direction });
   };
 
   const handleSortEmail = () => {
-    const direction = emailSortConfig.direction === "ascending" ? "descending" : "ascending";
+    const direction =
+      emailSortConfig.direction === "ascending" ? "descending" : "ascending";
     const sortUsers = [...users].sort((a, b) => {
       const emailA = a.email || "";
       const emailB = b.email || "";
-      return direction === "ascending" ? emailA.localeCompare(emailB) : emailB.localeCompare(emailA);
+      return direction === "ascending"
+        ? emailA.localeCompare(emailB)
+        : emailB.localeCompare(emailA);
     });
     setUsers(sortUsers);
     setEmailSortConfig({ direction });
@@ -359,7 +408,8 @@ const UserManagement = () => {
 
   const filterUsers = users.filter((user) => {
     return (
-      (user.first_name && user.first_name.toLowerCase().includes(searchQuery)) ||
+      (user.first_name &&
+        user.first_name.toLowerCase().includes(searchQuery)) ||
       (user.last_name && user.last_name.toLowerCase().includes(searchQuery)) ||
       (user.email && user.email.toLowerCase().includes(searchQuery))
     );
@@ -368,140 +418,183 @@ const UserManagement = () => {
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const totalPages = Math.ceil(filterUsers.length / usersPerPage);
-  const currentFilteredUsers = filterUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  
+  const currentFilteredUsers = filterUsers.slice(
+    indexOfFirstUser,
+    indexOfLastUser
+  );
 
   return (
     <div className="h-screen overflow-y-auto my-10">
       <div>
-      <ToastContainer />
-        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
+        <ToastContainer />
+        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">
+          管理ユーザー情報
+        </h1>
         <div className="flex justify-center w-[calc(100vw-300px)]">
-        <div className="mx-1 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:max-w-full xl:min-w-full mb-[100px]">
-          <div className="flex justify-between items-center p-5">
-            <div className="flex items-center relative">
-              <input
-                type="text"
-                placeholder="検索"
-                className="text-base p-3 w-[400px] rounded border border-[var(--fontcolor-header)]"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-              <i className="absolute text-lg sm:text-xl md:text-2xl py-2 px-3 right-1">
-                <FaSearch />
+          <div className="mx-1 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:max-w-full xl:min-w-full mb-[100px]">
+            <div className="flex justify-between items-center p-5">
+              <div className="flex items-center relative">
+                <input
+                  type="text"
+                  placeholder="検索"
+                  className="text-base p-3 w-[400px] rounded border border-[var(--fontcolor-header)]"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <i className="absolute text-lg sm:text-xl md:text-2xl py-2 px-3 right-1">
+                  <FaSearch />
+                </i>
+              </div>
+              <i
+                className="text-[var(--bgc-sidenav)] text-2xl sm:text-3xl md:text-4xl mr-5 hover:text-[var(--fontcolor-header)] cursor-pointer"
+                onClick={openAddUserModal}
+              >
+                <HiUserAdd />
               </i>
             </div>
-            <i className="text-[var(--bgc-sidenav)] text-2xl sm:text-3xl md:text-4xl mr-5 hover:text-[var(--fontcolor-header)] cursor-pointer" onClick={openAddUserModal}>
-              <HiUserAdd />
-            </i>
-          </div>
 
-          <div className="w-full p-5 overflow-auto min-h-[500px] shadow-sm sm:min-w-[100px] md:min-w-[900px] lg:min-w-full">
-            {loading ? (
-              <div className=" flex flex-col justify-center items-center gap-4 min-h-[500px]">
-                <div className="loader"></div>
-                <div>Loading...</div>
-              </div>
-            ) : (
-              <table className="border-collapse lg:w-full">
-              <thead>
-                <tr>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]"> 
-                    <div className="flex items-center gap-5">
-                    姓
-                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortLastName}>
-                      <LuArrowDownUp />
-                    </i>
-                    </div>
-                  </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
-                  <div className="flex items-center gap-5">
-                    名
-                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortFirstName}>
-                      <LuArrowDownUp />
-                    </i>
-                    </div>
-                  </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
-                    <div className="flex items-center gap-5">
-                    作成日
-                    <i className="cursor-pointer hover:text-gray-500" onClick={handleSortDate}>
-                      <LuArrowDownUp />
-                    </i>
-                    </div>
-                  </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
-                  <div className="flex items-center gap-5">
-                    メールアドレス
-                    <i className="ml-2 cursor-pointer hover:text-gray-500" onClick={handleSortEmail}>
-                      <LuArrowDownUp />
-                    </i>
-                    </div>
-                  </th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">権限</th>
-                  <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">アクション</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {currentFilteredUsers.length > 0 ? (
-                  currentFilteredUsers.map((user) => (
-                    <tr key={user.id}>
-                      <td className="border border-[var(--fontcolor-header)] p-2">{user.last_name}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-2">{user.first_name}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-2">{user.created_at}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-2">{user.email}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-2">{user.role}</td>
-                      <td className="border border-[var(--fontcolor-header)] p-2">
-                        <div className="flex justify-center gap-2">
-                          <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => openEditModal(user)}>
-                            <FaUserEdit />
-                          </i>
-                          <i className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]" onClick={() => handleDelete(user)}>
-                            <FaTrashCan />
+            <div className="w-full p-5 overflow-auto min-h-[500px] shadow-sm sm:min-w-[100px] md:min-w-[900px] lg:min-w-full">
+              {loading ? (
+                <div className=" flex flex-col justify-center items-center gap-4 min-h-[500px]">
+                  <div className="loader"></div>
+                  <div>Loading...</div>
+                </div>
+              ) : (
+                <table className="border-collapse lg:w-full">
+                  <thead>
+                    <tr>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
+                        <div className="flex items-center gap-5">
+                          姓
+                          <i
+                            className="ml-2 cursor-pointer hover:text-gray-500"
+                            onClick={handleSortLastName}
+                          >
+                            <LuArrowDownUp />
                           </i>
                         </div>
-                      </td>
+                      </th>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
+                        <div className="flex items-center gap-5">
+                          名
+                          <i
+                            className="ml-2 cursor-pointer hover:text-gray-500"
+                            onClick={handleSortFirstName}
+                          >
+                            <LuArrowDownUp />
+                          </i>
+                        </div>
+                      </th>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[250px]">
+                        <div className="flex items-center gap-5">
+                          作成日
+                          <i
+                            className="cursor-pointer hover:text-gray-500"
+                            onClick={handleSortDate}
+                          >
+                            <LuArrowDownUp />
+                          </i>
+                        </div>
+                      </th>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                        <div className="flex items-center gap-5">
+                          メールアドレス
+                          <i
+                            className="ml-2 cursor-pointer hover:text-gray-500"
+                            onClick={handleSortEmail}
+                          >
+                            <LuArrowDownUp />
+                          </i>
+                        </div>
+                      </th>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">
+                        権限
+                      </th>
+                      <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[100px]">
+                        アクション
+                      </th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                  <td colSpan="6" className="border border-[var(--fontcolor-header)] p-2 text-center">
-                    No data Found
-                  </td>
-                </tr>
-                )}
-              </tbody>
-            </table>
-            )}
-            
-          </div>
+                  </thead>
 
-          {filterUsers.length > usersPerPage && (
-            <div className="flex justify-between mt-4 p-5 mb-20 ">
-              <button
-                className={`flex justify-start px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${currentPage === 1 ? 'invisible' : 'visible'}`}
-                onClick={handlePreviosPage}
-              >
-                前のページ
-              </button>
-
-              <div className="flex justify-center text-sm text-[var(--bgc-sidenav)]">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                className={`flex justify-end px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${currentPage === totalPages ? 'invisible' : 'visible'}`}
-                onClick={handleNextPage}
-              >
-                次のページ
-              </button>
+                  <tbody>
+                    {currentFilteredUsers.length > 0 ? (
+                      currentFilteredUsers.map((user) => (
+                        <tr key={user.id}>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            {user.last_name}
+                          </td>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            {user.first_name}
+                          </td>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            {user.created_at}
+                          </td>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            {user.email}
+                          </td>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            {user.role}
+                          </td>
+                          <td className="border border-[var(--fontcolor-header)] p-2">
+                            <div className="flex justify-center gap-2">
+                              <i
+                                className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]"
+                                onClick={() => openEditModal(user)}
+                              >
+                                <FaUserEdit />
+                              </i>
+                              <i
+                                className="text-xl text-[var(--bgc-sidenav)] cursor-pointer hover:text-[var(--fontcolor-header)]"
+                                onClick={() => handleDelete(user)}
+                              >
+                                <FaTrashCan />
+                              </i>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          className="border border-[var(--fontcolor-header)] p-2 text-center"
+                        >
+                          No data Found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
-          )}
+
+            {filterUsers.length > usersPerPage && (
+              <div className="flex justify-between mt-4 p-5 mb-20 ">
+                <button
+                  className={`flex justify-start px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${
+                    currentPage === 1 ? "invisible" : "visible"
+                  }`}
+                  onClick={handlePreviosPage}
+                >
+                  前へ
+                </button>
+
+                <div className="flex justify-center text-sm text-[var(--bgc-sidenav)]">
+                  Page {currentPage} of {totalPages}
+                </div>
+
+                <button
+                  className={`flex justify-end px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${
+                    currentPage === totalPages ? "invisible" : "visible"
+                  }`}
+                  onClick={handleNextPage}
+                >
+                  次へ
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        </div>
-  
 
         <UserModal
           isOpen={isModalOpen}
@@ -519,7 +612,7 @@ const UserManagement = () => {
           password={password}
           setPassword={setPassword}
         />
-        </div>
+      </div>
     </div>
   );
 };

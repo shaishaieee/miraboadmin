@@ -10,13 +10,12 @@ const NewPassword = () => {
   const email = location.state?.email || "";
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {
-      toast.warning("全てのフィールドを入力してください", { autoClose: 3000 });
+      toast.warning("全ての項目を満たしてください。", { autoClose: 3000 });
       return;
     }
 
@@ -26,34 +25,39 @@ const NewPassword = () => {
     }
 
     try {
-      const response = await axios.post("https://reuvindevs.com/liff/public/api/forgot-password", {
-        email,
-        password: newPassword,
-      });
+      const response = await axios.post(
+        "https://reuvindevs.com/liff/public/api/forgot-password",
+        {
+          email,
+          password: newPassword,
+        }
+      );
 
       if (response.data.success) {
-        toast.success("パスワードが正常にリセットされました", { autoClose: 3000 });
+        toast.success("パスワードが正常にリセットされました", {
+          autoClose: 3000,
+        });
         navigate("/login");
       } else {
         toast.error("パスワードのリセットに失敗しました", { autoClose: 3000 });
       }
     } catch (error) {
       console.error("Password reset error:", error);
-      toast.error("パスワードのリセット中にエラーが発生しました", { autoClose: 3000 });
+      toast.error("パスワードのリセット中にエラーが発生しました", {
+        autoClose: 3000,
+      });
     }
   };
-  
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="shadow-md w-[400px]"> 
-          <div className="bg-white p-8 ">
-            <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+      <div className="shadow-md w-[400px]">
+        <div className="bg-white p-8 ">
+          <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
             新しいパスワードを作成する
-            </h2>
+          </h2>
 
-            <div>
+          <div>
             <form onSubmit={handlePasswordReset}>
               <div className="mb-4">
                 <label
@@ -100,14 +104,17 @@ const NewPassword = () => {
                 提出する
               </button>
             </form>
-            </div> 
-          </div>
-
-          <div className="flex justify-center items-center w-[400px] h-[200px] bg-[var(--bgc-sidenav)] px-[30px} py-[20px]">
-            <img className="w-[200px]" src={Forget} alt="Forget Password" />
-            <p className="text-white items-center mr-[20px]"> パスワードをお忘れの場合はこちらから。</p>
           </div>
         </div>
+
+        <div className="flex justify-center items-center w-[400px] h-[200px] bg-[var(--bgc-sidenav)] px-[30px} py-[20px]">
+          <img className="w-[200px]" src={Forget} alt="Forget Password" />
+          <p className="text-white items-center mr-[20px]">
+            {" "}
+            パスワードをお忘れの場合はこちらから。
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -42,13 +42,10 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
     }
   };
 
- 
-
   const handleDelete = () => {
-      onDelete(user?.id);
+    onDelete(user?.id);
   };
 
-  
   return (
     isOpen && (
       <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm shadow-2xl ">
@@ -214,7 +211,9 @@ const TotalUsersInfo = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/answers`);
-      const sortedUsers = response.data.data.answers.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const sortedUsers = response.data.data.answers.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
       setUsers(sortedUsers);
       console.log("Fetched Users:", sortedUsers);
     } catch (error) {
@@ -226,13 +225,13 @@ const TotalUsersInfo = () => {
 
   useEffect(() => {
     fetchUser();
-    console.log("Triggered useEffect")
+    console.log("Triggered useEffect");
   }, [trigger]);
 
   const handleDeleteUser = async (id) => {
     const confirmed = window.confirm("削除しますか?");
     if (!confirmed) return;
-  
+
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`${apiUrl}/v1/delete-answer/${id}`, {
@@ -242,25 +241,25 @@ const TotalUsersInfo = () => {
       });
       toast.success("ユーザーが正常に削除されました");
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-  
+
       setIsModalOpen(false);
     } catch (error) {
       toast.warning("処理中にエラーが発生しました。もう一度試してください。");
       console.error("Error deleting user:", error);
     }
   };
-  
 
   console.log("This is trigger" + trigger);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value.toLowerCase());
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const filterUser = users.filter((user) => {
     return (
-      (user.displayName && user.displayName.toLowerCase().includes(searchQuery)) ||
+      (user.displayName &&
+        user.displayName.toLowerCase().includes(searchQuery)) ||
       (user.userId && user.userId.toLowerCase().includes(searchQuery))
     );
   });
@@ -268,7 +267,10 @@ const TotalUsersInfo = () => {
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const totalPages = Math.ceil(filterUser.length / usersPerPage);
-  const currentFilteredUsers = filterUser.slice(indexOfFirstUser, indexOfLastUser);
+  const currentFilteredUsers = filterUser.slice(
+    indexOfFirstUser,
+    indexOfLastUser
+  );
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -282,14 +284,13 @@ const TotalUsersInfo = () => {
     }
   };
 
-  
-
-
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <div className="h-screen overflow-y-auto my-10">
-        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">ユーザー管理</h1>
+        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">
+          管理ユーザー情報
+        </h1>
         <div className="flex justify-center items-center gap-4">
           <div className="ml-10 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:min-w-full xl:min-w-full">
             <div className="mx-auto p-5">
@@ -318,8 +319,12 @@ const TotalUsersInfo = () => {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr>
-                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">ユーザーID</th>
-                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">表示名</th>
+                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                          ユーザーID
+                        </th>
+                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
+                          表示名
+                        </th>
                       </tr>
                     </thead>
 
@@ -341,7 +346,10 @@ const TotalUsersInfo = () => {
                         ))
                       ) : (
                         <tr>
-                          <td className="border border-[var(--fontcolor-header)] p-2 text-center" colSpan="2">
+                          <td
+                            className="border border-[var(--fontcolor-header)] p-2 text-center"
+                            colSpan="2"
+                          >
                             No data found
                           </td>
                         </tr>
@@ -387,7 +395,6 @@ const TotalUsersInfo = () => {
           onDelete={handleDeleteUser}
         />
       </div>
-
     </div>
   );
 };

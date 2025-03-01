@@ -4,10 +4,10 @@ import { RiAdvertisementFill } from "react-icons/ri";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { userContext } from "../utils/context";
-import ApexCharts from 'react-apexcharts';
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/themes/material_blue.css';
-import { FaCalendarAlt } from 'react-icons/fa';
+import ApexCharts from "react-apexcharts";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/themes/material_blue.css";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const Dashboard = () => {
   const context = userContext();
@@ -17,7 +17,11 @@ const Dashboard = () => {
   const [totalLineUser, setTotalLineUser] = useState([]);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedDateRange, setSelectedDateRange] = useState({ start: "", end: "", key: 0 });
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    start: "",
+    end: "",
+    key: 0,
+  });
   const [filteredData, setFilteredData] = useState({
     user_count: [],
     ads_count: [],
@@ -31,24 +35,24 @@ const Dashboard = () => {
 
   const getLatestWeek = () => {
     const today = new Date();
-    const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-    const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+    const firstDayOfWeek = new Date(
+      today.setDate(today.getDate() - today.getDay())
+    );
+    const lastDayOfWeek = new Date(
+      today.setDate(today.getDate() - today.getDay() + 6)
+    );
     return {
       start: firstDayOfWeek.toISOString().split("T")[0],
       end: lastDayOfWeek.toISOString().split("T")[0],
     };
   };
 
-
   const fetchData = useCallback(async () => {
-
-
     if (!token) {
       console.error("No token found");
       setLoading(false);
       return;
     }
-
 
     const start = selectedDateRange.start || getLatestWeek().start;
     const end = selectedDateRange.end || getLatestWeek().end;
@@ -91,7 +95,6 @@ const Dashboard = () => {
         result_count: gptRes.data.records || [],
         answers_count: lineUserRes.data.records || [],
       });
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -111,9 +114,15 @@ const Dashboard = () => {
     filteredData.ads_count.forEach((entry) => {
       const date = entry.date;
 
-      const userEntry = filteredData.user_count?.find((item) => item.date === date) || { user_count: 0 };
-      const gptEntry = filteredData.result_count?.find((item) => item.date === date) || { result_count: 0 };
-      const lineUserEntry = filteredData.answers_count?.find((item) => item.date === date) || { answers_count: 0 };
+      const userEntry = filteredData.user_count?.find(
+        (item) => item.date === date
+      ) || { user_count: 0 };
+      const gptEntry = filteredData.result_count?.find(
+        (item) => item.date === date
+      ) || { result_count: 0 };
+      const lineUserEntry = filteredData.answers_count?.find(
+        (item) => item.date === date
+      ) || { answers_count: 0 };
 
       adminsData.push(userEntry.user_count || 0);
       adsData.push(entry.ads_count || 0);
@@ -125,16 +134,21 @@ const Dashboard = () => {
     setChartOptions((prevOptions) => ({
       ...prevOptions,
       series: [
-        { name: "管理者の総数", data: adminsData },
-        { name: "総ミニアプリ広告再生数", data: adsData },
-        { name: "総GPT応答数", data: chatResponsesData },
-        { name: "総ユーザー数", data: usersData },
+        { name: "管理者増加数", data: adminsData },
+        { name: "広告再生数", data: adsData },
+        { name: "GPT応答数", data: chatResponsesData },
+        { name: "ユーザー増加数", data: usersData },
       ],
       xaxis: { categories },
     }));
 
-    console.log("Updated Chart Data:", { adminsData, adsData, chatResponsesData, usersData, categories });
-
+    console.log("Updated Chart Data:", {
+      adminsData,
+      adsData,
+      chatResponsesData,
+      usersData,
+      categories,
+    });
   }, [filteredData]);
 
   useEffect(() => {
@@ -158,7 +172,7 @@ const Dashboard = () => {
               key: Date.now(),
             });
           }
-        }
+        },
       });
     }
   }, [calendarVisible]);
@@ -166,103 +180,113 @@ const Dashboard = () => {
   const [chartOptions, setChartOptions] = useState({
     chart: { type: "line", height: 350 },
     series: [
-      { name: "管理者の総数", data: [] },
-      { name: "総ミニアプリ広告再生数", data: [] },
-      { name: "総GPT応答数", data: [] },
-      { name: "総ユーザー数", data: [] },
+      { name: "管理者増加数", data: [] },
+      { name: "広告再生数", data: [] },
+      { name: "GPT応答数", data: [] },
+      { name: "ユーザー増加数", data: [] },
     ],
     xaxis: { categories: [] },
-    title: { text: "Line Chatbot Chart" },
+    title: { text: "" },
   });
 
   return (
     <div className="h-screen overflow-y-auto">
       {loading ? (
-          <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full">
-            <div className="loader"></div>
-            <div>Loading...</div>
-          </div>
+        <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full">
+          <div className="loader"></div>
+          <div>Loading...</div>
+        </div>
       ) : (
-          <div>
-            <h1 className="font-semibold ml-[20px] mb-5">ダッシュボード</h1>
+        <div>
+          <h1 className="font-semibold ml-[20px] mb-5">
+            じぶんLABO by Mirabo 管理画面
+          </h1>
 
-
-            <div className="w-full max-w-[1200px] mx-auto ml-5">
-              <div className="flex flex-wrap justify-center items-center gap-[12px]">
-                {/* Box 1 */}
-                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
-                  <div className="box-text">
-                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalUser}</h1>
-                    <h4 className="font-semibold text-white">管理者の総数</h4>
-                  </div>
-                  <i className="text-[60px] text-[var(--darkblue)]">
-                    <FaUsers />
-                  </i>
+          <div className="w-full max-w-[1200px] mx-auto ml-5">
+            <div className="flex flex-wrap justify-center items-center gap-[12px]">
+              {/* Box 1 */}
+              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
+                <div className="box-text">
+                  <h1 className="mb-[5px] text-white text-3xl font-bold">
+                    {totalUser}
+                  </h1>
+                  <h4 className="font-semibold text-white">総管理者数</h4>
                 </div>
+                <i className="text-[60px] text-[var(--darkblue)]">
+                  <FaUsers />
+                </i>
+              </div>
 
-                {/* Box 2 */}
-                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
-                  <div className="box-text">
-                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalAds}</h1>
-                    <h4 className="font-semibold text-white">総ミニアプリ広告再生数</h4>
-                  </div>
-                  <i className="text-[60px] text-[var(--darkgreen)]">
-                    <RiAdvertisementFill />
-                  </i>
+              {/* Box 2 */}
+              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
+                <div className="box-text">
+                  <h1 className="mb-[5px] text-white text-3xl font-bold">
+                    {totalAds}
+                  </h1>
+                  <h4 className="font-semibold text-white">総広告再生数</h4>
                 </div>
+                <i className="text-[60px] text-[var(--darkgreen)]">
+                  <RiAdvertisementFill />
+                </i>
+              </div>
 
-                {/* Box 3 */}
-                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
-                  <div className="box-text">
-                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalGpt}</h1>
-                    <h4 className="font-semibold text-white">総GPT応答数</h4>
-                  </div>
-                  <i className="text-[60px] text-[var(--darkyellow)]">
-                    <FaRobot />
-                  </i>
+              {/* Box 3 */}
+              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
+                <div className="box-text">
+                  <h1 className="mb-[5px] text-white text-3xl font-bold">
+                    {totalGpt}
+                  </h1>
+                  <h4 className="font-semibold text-white">総GPT応答数</h4>
                 </div>
+                <i className="text-[60px] text-[var(--darkyellow)]">
+                  <FaRobot />
+                </i>
+              </div>
 
-                {/* Box 4 */}
-                <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
-                  <div className="box-text">
-                    <h1 className="mb-[5px] text-white text-3xl font-bold">{totalLineUser}</h1>
-                    <h4 className="font-semibold text-white">総ユーザー数</h4>
-                  </div>
-                  <i className="text-[60px] text-[var(--darkred)]">
-                    <FaUsersLine />
-                  </i>
+              {/* Box 4 */}
+              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
+                <div className="box-text">
+                  <h1 className="mb-[5px] text-white text-3xl font-bold">
+                    {totalLineUser}
+                  </h1>
+                  <h4 className="font-semibold text-white">総ユーザー数</h4>
                 </div>
+                <i className="text-[60px] text-[var(--darkred)]">
+                  <FaUsersLine />
+                </i>
               </div>
             </div>
+          </div>
 
-          
-            <div className="mb-20 mt-10 shadow-2xl p-6 max-w-4xl mx-auto relative">
-              <div
-                onClick={() => setCalendarVisible(!calendarVisible)}
-                className="absolute top-6 right-4 cursor-pointer text-3xl text-[var(--bgc-sidenav)] z-10">
-                <FaCalendarAlt />
-              </div>
+          <div className="mb-20 mt-10 shadow-2xl p-6 max-w-4xl mx-auto relative">
+            <div
+              onClick={() => setCalendarVisible(!calendarVisible)}
+              className="absolute top-6 right-4 cursor-pointer text-3xl text-[var(--bgc-sidenav)] z-10"
+            >
+              <FaCalendarAlt />
+            </div>
 
-              {calendarVisible && (
-                <div className="absolute top-16 right-4 z-20 bg-white rounded-lg shadow-lg p-4 w-85 border">
-                  <input id="calendar" className="border p-2 rounded-md w-full" placeholder="Select Date Range" />
-                </div>
-              )}
-
-
-
-
-              <div className="mt-10 p-6 rounded-lg shadow-lg">
-                <ApexCharts
-                  options={chartOptions}
-                  series={chartOptions.series}
-                  type="line"
-                  height={350}
+            {calendarVisible && (
+              <div className="absolute top-16 right-4 z-20 bg-white rounded-lg shadow-lg p-4 w-85 border">
+                <input
+                  id="calendar"
+                  className="border p-2 rounded-md w-full"
+                  placeholder="Select Date Range"
                 />
               </div>
+            )}
+
+            <div className="mt-10 p-6 rounded-lg shadow-lg">
+              <ApexCharts
+                options={chartOptions}
+                series={chartOptions.series}
+                type="line"
+                height={350}
+              />
             </div>
           </div>
-     )}    
+        </div>
+      )}
     </div>
   );
 };
