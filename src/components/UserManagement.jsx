@@ -199,6 +199,26 @@ const UserManagement = () => {
     setIsModalOpen(true);
   }
 
+  // const fetchUser = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.get(`${apiUrl}/v1/users`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     console.log(response.data);
+  //     setUsers(response.data);
+
+  //     console.log("Fetched Users:", response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
   const fetchUser = async () => {
     setLoading(true);
     try {
@@ -209,15 +229,16 @@ const UserManagement = () => {
         },
       });
       console.log(response.data);
-      setUsers(response.data);
-
-      console.log("Fetched Users:", response.data);
+      const sortedUsers = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setUsers(sortedUsers);
+  
+      console.log("Fetched Users:", sortedUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   console.log(questions)
   useEffect(() => {
@@ -243,12 +264,12 @@ const UserManagement = () => {
         setUsers(users.map((u) => (u.email === user.email ? { ...u, ...newUser } : u)));
         toast.success("ユーザーが正常に更新されました");
       } else {
-        const response = await axios.post(`${apiUrl}/v1/users`, newUser, {
+        const response = await axios.post(`${apiUrl}/v1/users`, { ...newUser, created_at: new Date().toISOString() }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsers([...users, response.data]);
+        setUsers((prevUsers) => [response.data, ...prevUsers]); // Prepend the new user to the users array
         toast.success("ユーザーが正常に追加されました");
       }
       setIsModalOpen(false);

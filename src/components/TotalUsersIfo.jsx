@@ -214,8 +214,9 @@ const TotalUsersInfo = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/answers`);
-      setUsers(response.data.data.answers);
-      console.log("Fetched Users:", response.data.data.answers);
+      const sortedUsers = response.data.data.answers.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setUsers(sortedUsers);
+      console.log("Fetched Users:", sortedUsers);
     } catch (error) {
       console.log(error);
     } finally {
