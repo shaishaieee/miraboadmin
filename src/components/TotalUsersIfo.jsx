@@ -30,7 +30,7 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `user_${id}_answers.xlsx`);
+      link.setAttribute("download", `user_${id}_answers.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -64,7 +64,7 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
               </i>
               <i
                 className="text-white text-xl mr-4 cursor-pointer"
-                onClick={() => handleExport(user?.id)}
+                onClick={() => handleExport(user?.userId)}
               >
                 <FaDownload />
               </i>
@@ -289,7 +289,7 @@ const TotalUsersInfo = () => {
       <ToastContainer />
       <div className="h-screen overflow-y-auto my-10">
         <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">
-          管理ユーザー情報
+          合計ユーザー情報
         </h1>
         <div className="flex justify-center items-center gap-4">
           <div className="ml-10 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:min-w-full xl:min-w-full">
