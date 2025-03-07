@@ -42,7 +42,7 @@
 //Login
 @media screen and (max-width: 640px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
   .xs-search {
     margin-right: 20px;
@@ -65,7 +65,7 @@
 
 @media screen and (max-width: 630px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -84,7 +84,7 @@
 
 @media screen and (max-width: 639px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -102,7 +102,7 @@
 
 @media screen and (max-width: 635px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -120,7 +120,7 @@
 
 @media screen and (max-width: 620px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -138,7 +138,7 @@
 
 @media screen and (max-width: 600px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -161,7 +161,7 @@
 
 @media screen and (max-width: 500px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -183,7 +183,7 @@
 
 @media screen and (max-width: 400px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -206,7 +206,7 @@
 
 @media screen and (max-width: 300px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {
@@ -229,7 +229,7 @@
 
 @media screen and (max-width: 200px) {
   .xs-login {
-    flex-direction: column;
+    display: none;
   }
 
   .xs-table {

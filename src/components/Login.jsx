@@ -90,8 +90,8 @@ const Login = () => {
           Admin <span className="font-light">MIRABO</span>
         </h1>
   
-        <div className="flex justify-center items-center shadow-2xl sm:flex-col md:flex-row lg:flex-row xl:flex-row xs-login">
-          <div className="pt-10 w-[370px] h-[400px]">
+        <div className="flex justify-center items-center sm:flex-col md:flex-row lg:flex-row xl:flex-row">
+          <div className="pt-10 w-[370px] h-[400px] shadow-2xl">
             <h3 className="text-center font-normal">サインイン</h3>
   
             <form onSubmit={handleSubmition}>
@@ -141,7 +141,7 @@ const Login = () => {
             </form>
           </div>
   
-          <div className="w-[370px] h-[400px] bg-[var(--bgc-sidenav)] p-5">
+          <div className="w-[370px] h-[400px] bg-[var(--bgc-sidenav)] p-5 sm:hidden md:block xs-login">
             <p className="text-center text-white">
             ようこそ、Mirabo質問部屋AI管理ダッシュボードへ！
             Mirabo質問部屋AIに関する記録がこちらに保存されています。
