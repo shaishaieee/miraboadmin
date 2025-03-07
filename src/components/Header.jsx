@@ -1,26 +1,22 @@
 import { FaBars } from "react-icons/fa";
 
-const Header = ({ toggleSideNav, isSideNavMinimized }) => {
+const Header = ({ toggleSideNav, toggleMobileNav }) => {
   return (
-    <>
-      <header className="absolute shadow-2xl w-full z-10">
-        <div >
-        <div
-          className={`flex justify-between items-center py-0 px-4 h-[8vh] ${isSideNavMinimized ? "xl:ml-[70px] lg:ml-[70px] md:ml-3 sm:ml-1" : "xl:ml-[250px] lg:ml-[250px] md:ml-[70px] sm:ml-[70px]"}`}
-        >
-          <div className="flex items-center gap-10">
-            <i className="text-gray-500 text-lg cursor-pointer" onClick={toggleSideNav}>
-              <FaBars />
-            </i>
+    <header className="bg-white shadow-md h-[8vh] flex items-center px-4 fixed top-0 w-full z-40">
+      <div className="flex items-center gap-4">
+        
+        <button className="sm:block md:hidden text-gray-700 text-xl ml-5" onClick={toggleMobileNav}>
+          <FaBars />
+        </button>
 
-            <h4 className="text-[var(--fontcolor-header)] font-bold text-base">
-              MIRABO
-            </h4>
-          </div>
-        </div>
-        </div>
-      </header>
-    </>
+        
+        <button className="hidden md:block text-gray-700 text-xl" onClick={toggleSideNav}>
+          <FaBars />
+        </button>
+
+        <h4 className="text-gray-700 font-bold text-lg">MIRABO</h4>
+      </div>
+    </header>
   );
 };
 

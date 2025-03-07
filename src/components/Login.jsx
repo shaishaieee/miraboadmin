@@ -90,7 +90,7 @@ const Login = () => {
           Admin <span className="font-light">MIRABO</span>
         </h1>
   
-        <div className="flex justify-center items-center shadow-2xl">
+        <div className="flex justify-center items-center shadow-2xl sm:flex-col md:flex-row lg:flex-row xl:flex-row xs-login">
           <div className="pt-10 w-[370px] h-[400px]">
             <h3 className="text-center font-normal">サインイン</h3>
   
@@ -148,6 +148,7 @@ const Login = () => {
             </p>
             <img className="w-[380px]" src={LoginPhoto} alt="Login" />
           </div>
+
         </div>
       </div>
       </>

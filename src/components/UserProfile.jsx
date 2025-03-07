@@ -94,44 +94,42 @@ const UserProfile = () => {
   return (
     <>
     <ToastContainer/>
-      <div>
-        <div className="flex justify-center items-center min-h-screen w-[calc(100vw-300px)] ">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full sm:max-w-md mx-4">
-            <h1 className="text-2xl mb-10 text-center">ユーザープロフィール</h1>
-            <div className="space-y-4">
-              <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                {user ? (
-                  <>
-                    <h3 className="text-xl font-semibold text-[var(--bgc-sidenav)] mb-[30px]">
-                      名: <span className="font-normal text-[var(--bgc-sidenav)]">{user.first_name}</span>
-                    </h3>
-                    <h3 className="text-xl font-semibold text-[var(--bgc-sidenav)] mb-[30px]">
-                      姓: <span className="font-normal text-[var(--bgc-sidenav)]">{user.last_name}</span>
-                    </h3>
-                    <h3 className="text-xl font-semibold text-[var(--bgc-sidenav)] mb-[30px]">
-                      メールアドレス: <span className="font-normal text-[var(--bgc-sidenav)]">{user.email}</span>
-                    </h3>
-                    <h3 className="text-xl font-semibold text-[var(--bgc-sidenav)] mb-[30px]">
-                      権限: <span className="font-normal text-[var(--bgc-sidenav)]">{user.role}</span>
-                    </h3>
+      <div className="flex justify-center items-center min-h-screen px-4">
+        <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg">
+          <h1 className="text-2xl mb-6 sm:mb-10 text-center">ユーザープロフィール</h1>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg shadow-md">
+              {user ? (
+                <>
+                  <h3 className="text-lg sm:text-xl font-semibold text-[var(--bgc-sidenav)] mb-4 sm:mb-6">
+                    名: <span className="font-normal">{user.first_name}</span>
+                  </h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-[var(--bgc-sidenav)] mb-4 sm:mb-6">
+                    姓: <span className="font-normal">{user.last_name}</span>
+                  </h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-[var(--bgc-sidenav)] mb-4 sm:mb-6">
+                    メールアドレス: <span className="font-normal">{user.email}</span>
+                  </h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-[var(--bgc-sidenav)] mb-4 sm:mb-6">
+                    権限: <span className="font-normal">{user.role}</span>
+                  </h3>
 
-                    <button
-                      className="w-full p-2.5 text-[16px] border-2 border-transparent bg-[var(--bgc-sidenav)] text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)] transition-all duration-1000 ease-in-out"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      パスワードを変更する
-                    </button>
-                  </>
-                ) : (
-                  <p className="text-center text-gray-500">ユーザーデータを取得中...</p>
-                )}
-              </div>
+                  <button
+                    className="w-full p-2.5 text-[16px] border-2 border-transparent bg-[var(--bgc-sidenav)] text-white cursor-pointer rounded-md hover:bg-[var(--fontcolor-header)] transition-all duration-300 ease-in-out"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    パスワードを変更する
+                  </button>
+                </>
+              ) : (
+                <p className="text-center text-gray-500">ユーザーデータを取得中...</p>
+              )}
             </div>
           </div>
         </div>
       </div>
-
-
+      
+      
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm shadow-2xl">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">

@@ -192,7 +192,7 @@ const Dashboard = () => {
   return (
     <div className="h-screen overflow-y-auto">
       {loading ? (
-        <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full">
+        <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full sm:justify-center">
           <div className="loader"></div>
           <div>Loading...</div>
         </div>

@@ -12,7 +12,7 @@ import TotalUsersInfo from './components/TotalUsersIfo'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import { useState } from 'react'
 import { UserContext } from './utils/context'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 
 const App = () => {
   const [data, setData] = useState(null)

@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
   const [questions, setQuestions] = useState([]);
+  const [loadingPdf, setLoadingPdf] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const fetchQuestions = async () => {
@@ -23,6 +24,7 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
   }, []);
 
   const handleExport = async (id) => {
+    setLoadingPdf(true); 
     try {
       const response = await axios.get(`${apiUrl}/export-answers/${id}`, {
         responseType: "blob",
@@ -39,6 +41,8 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
     } catch (error) {
       console.error("Export Error:", error);
       toast.warning("ユーザーの回答をエクスポートできませんでした");
+    } finally {
+      setLoadingPdf(false);
     }
   };
 
@@ -63,10 +67,14 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
                 <FaTrashCan />
               </i>
               <i
-                className="text-white text-xl mr-4 cursor-pointer"
+                className="text-white text-xl mr-4 ml-3 cursor-pointer"
                 onClick={() => handleExport(user?.userId)}
               >
-                <FaDownload />
+                {loadingPdf ? (
+                  <div className="loader-small"></div> 
+                ) : (
+                  <FaDownload />
+                )}
               </i>
             </div>
           </div>
@@ -286,107 +294,93 @@ const TotalUsersInfo = () => {
 
   return (
     <div>
-      <ToastContainer />
-      <div className="h-screen overflow-y-auto my-10">
-        <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl sm:w-11/20">
-          合計ユーザー情報
-        </h1>
-        <div className="flex justify-center items-center gap-4">
-          <div className="ml-10 rounded-md sm:min-w-2/4 md:min-w-1/2 lg:min-w-full xl:min-w-full">
-            <div className="mx-auto p-5">
-              <div className="flex items-center relative">
-                <input
-                  type="text"
-                  placeholder="検索"
-                  className="text-base p-3 w-[400px] rounded border border-[var(--fontcolor-header)]"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <i className="absolute text-lg sm:text-xl md:text-2xl py-2 px-3 left-[350px]">
-                  <FaSearch />
-                </i>
-              </div>
+    <ToastContainer />
+    <div className="h-screen overflow-y-auto my-10 ml-5 w-full max-w-5xl px-4 md:px-6 lg:px-8">
+      <h1 className="font-semibold mb-5 text-lg sm:text-xl md:text-2xl w-full">
+        合計ユーザー情報
+      </h1>
+      <div className="flex flex-col items-center w-full">
+        <div className="w-full max-w-4xl rounded-md">
+          <div className="border-amber-600 w-full px-4">
+            <div className="flex items-center relative w-full max-w-lg mx-auto">
+              <input
+                type="text"
+                placeholder="検索"
+                className="text-base p-3 w-full rounded border border-gray-400"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              <i className="absolute right-4 text-lg">
+                <FaSearch />
+              </i>
             </div>
-
-            <div className="flex justify-center w-[calc(100vw-300px)] mr[10px]">
-              <div className="w-full py-5 px-1 overflow-auto min-h-[500px] shadow-sm">
-                {loading ? (
-                  <div className="flex flex-col justify-center items-center gap-4 min-h-[500px]">
-                    <div className="loader"></div>
-                    <div>Loading...</div>
-                  </div>
-                ) : (
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr>
-                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
-                          ユーザーID
-                        </th>
-                        <th className="border border-[var(--fontcolor-header)] p-2 text-black text-start lg:w-[300px]">
-                          表示名
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {currentFilteredUsers.length > 0 ? (
-                        currentFilteredUsers.map((user) => (
-                          <tr
-                            key={user.id}
-                            onClick={() => openUserInfoModal(user)}
-                            className="group cursor-pointer"
-                          >
-                            <td className="border border-[var(--fontcolor-header)] p-2 group-hover:bg-[var(--fontcolor-header)] group-hover:text-white">
-                              {user.userId}
-                            </td>
-                            <td className="border border-[var(--fontcolor-header)] p-2 group-hover:bg-[var(--fontcolor-header)] group-hover:text-white">
-                              {user.displayName}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            className="border border-[var(--fontcolor-header)] p-2 text-center"
-                            colSpan="2"
-                          >
-                            No data found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
-
-            {filterUser.length > usersPerPage && (
-              <div className="flex justify-between mt-4 mb-20 p-5">
-                <button
-                  className={`flex justify-start px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${
-                    currentPage === 1 ? "invisible" : "visible"
-                  }`}
-                  onClick={handlePreviosPage}
-                >
-                  前のページ
-                </button>
-
-                <div className="flex justify-center text-sm text-[var(--bgc-sidenav)]">
-                  Page {currentPage} of {totalPages}
-                </div>
-
-                <button
-                  className={`flex justify-end px-4 py-2 bg-gray-300 rounded-sm hover:bg-gray-400 cursor-pointer ${
-                    currentPage === totalPages ? "invisible" : "visible"
-                  }`}
-                  onClick={handleNextPage}
-                >
-                  次のページ
-                </button>
-              </div>
-            )}
           </div>
+  
+          <div className="flex justify-center w-full overflow-x-auto mt-4">
+            <div className="py-5 min-h-[300px] shadow-sm w-full">
+              {loading ? (
+                <div className="flex flex-col justify-center items-center gap-4 min-h-[300px]">
+                  <div className="loader"></div>
+                  <div>Loading...</div>
+                </div>
+              ) : (
+                <table className="w-full border-collapse text-sm md:text-base">
+                  <thead>
+                    <tr>
+                      <th className="border border-gray-400 p-2 text-start">ユーザーID</th>
+                      <th className="border border-gray-400 p-2 text-start">表示名</th>
+                    </tr>
+                  </thead>
+  
+                  <tbody>
+                    {currentFilteredUsers.length > 0 ? (
+                      currentFilteredUsers.map((user) => (
+                        <tr
+                          key={user.id}
+                          onClick={() => openUserInfoModal(user)}
+                          className="group cursor-pointer hover:bg-gray-200"
+                        >
+                          <td className="border border-gray-400 p-2">{user.userId}</td>
+                          <td className="border border-gray-400 p-2">{user.displayName}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td className="border border-gray-400 p-2 text-center" colSpan="2">
+                          No data found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+  
+          {filterUser.length > usersPerPage && (
+            <div className="flex justify-between mt-4 mb-20 p-5 w-full">
+              <button
+                className={`px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 ${currentPage === 1 ? "invisible" : "visible"}`}
+                onClick={handlePreviosPage}
+              >
+                前のページ
+              </button>
+  
+              <div className="text-sm text-gray-700">
+                Page {currentPage} of {totalPages}
+              </div>
+  
+              <button
+                className={`px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 ${currentPage === totalPages ? "invisible" : "visible"}`}
+                onClick={handleNextPage}
+              >
+                次のページ
+              </button>
+            </div>
+          )}
         </div>
+      </div>
+  
 
         <UserInfoModal
           isOpen={isModalOpen}
@@ -396,6 +390,7 @@ const TotalUsersInfo = () => {
         />
       </div>
     </div>
+    
   );
 };
 
