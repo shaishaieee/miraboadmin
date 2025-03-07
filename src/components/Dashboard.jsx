@@ -190,22 +190,22 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="h-screen overflow-y-auto">
+    <div className="h-screen overflow-auto">
       {loading ? (
-        <div className="flex flex-col justify-center items-center w-[calc(100vw-250px)] h-full sm:justify-center">
+        <div className="flex flex-col justify-center items-center gap-4 min-h-[500px]">
           <div className="loader"></div>
           <div>Loading...</div>
         </div>
       ) : (
         <div>
-          <h1 className="font-semibold ml-[20px] mb-5">
+          <h1 className="font-semibold ml-5 mb-5 text-lg sm:text-xl md:text-2xl">
             じぶんLABO by Mirabo 管理画面
           </h1>
 
-          <div className="w-full max-w-[1200px] mx-auto ml-5">
-            <div className="flex flex-wrap justify-center items-center gap-[12px]">
+          <div className="w-full max-w-[1200px] mx-auto px-4">
+            <div className="flex flex-wrap justify-center items-center gap-4">
               {/* Box 1 */}
-              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
+              <div className="flex justify-between h-[100px] w-full sm:w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--blue)]">
                 <div className="box-text">
                   <h1 className="mb-[5px] text-white text-3xl font-bold">
                     {totalUser}
@@ -218,7 +218,7 @@ const Dashboard = () => {
               </div>
 
               {/* Box 2 */}
-              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
+              <div className="flex justify-between h-[100px] w-full sm:w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--green)]">
                 <div className="box-text">
                   <h1 className="mb-[5px] text-white text-3xl font-bold">
                     {totalAds}
@@ -231,7 +231,7 @@ const Dashboard = () => {
               </div>
 
               {/* Box 3 */}
-              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
+              <div className="flex justify-between h-[100px] w-full sm:w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--yellow)]">
                 <div className="box-text">
                   <h1 className="mb-[5px] text-white text-3xl font-bold">
                     {totalGpt}
@@ -244,7 +244,7 @@ const Dashboard = () => {
               </div>
 
               {/* Box 4 */}
-              <div className="flex justify-between h-[100px] min-w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
+              <div className="flex justify-between h-[100px] w-full sm:w-[290px] rounded-[5px] p-[15px] shadow-2xl bg-[var(--red)]">
                 <div className="box-text">
                   <h1 className="mb-[5px] text-white text-3xl font-bold">
                     {totalLineUser}

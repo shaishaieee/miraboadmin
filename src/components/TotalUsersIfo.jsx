@@ -53,13 +53,13 @@ const UserInfoModal = ({ isOpen, onClose, user, onDelete }) => {
   return (
     isOpen && (
       <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm shadow-2xl ">
-        <div className="bg-[var(--bgc-sidenav)] p-6 rounded-sm w-2/3 h-[65vh] overflow-x-auto">
+        <div className="bg-[var(--bgc-sidenav)] p-6 rounded-sm w-full max-w-md">
           <div className="flex justify-between items-center mb-4 text-white">
             <div>
               <h1 className="text-4xl">{user?.displayName}</h1>
               <h3>{user?.userId}</h3>
             </div>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-0.5">
               <i
                 className="text-white text-xl mr-4 cursor-pointer"
                 onClick={handleDelete}
@@ -295,7 +295,7 @@ const TotalUsersInfo = () => {
   return (
     <div>
     <ToastContainer />
-    <div className="h-screen overflow-y-auto my-10 ml-5 w-full max-w-5xl px-4 md:px-6 lg:px-8">
+    <div className="h-screen overflow-y-auto my-10 md:ml-5 lg:ml-5 w-full max-w-5xl px-4 md:px-6 lg:px-8">
       <h1 className="font-semibold mb-5 text-lg sm:text-xl md:text-2xl w-full">
         合計ユーザー情報
       </h1>
