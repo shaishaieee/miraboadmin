@@ -91,7 +91,7 @@ const Login = () => {
         </h1>
   
         <div className="flex justify-center items-center sm:flex-col md:flex-row lg:flex-row xl:flex-row">
-          <div className="pt-10 w-[370px] h-[400px] shadow-2xl">
+          <div className="pt-10 w-[370px] h-[400px] md:shadow-2xl lg:shadow-2xl xl:shadow-2xl sm:shadow-2xl">
             <h3 className="text-center font-normal">サインイン</h3>
   
             <form onSubmit={handleSubmition}>
